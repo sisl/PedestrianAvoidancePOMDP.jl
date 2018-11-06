@@ -77,8 +77,8 @@ const PEDESTRIAN_OFF_KEY = -1
 
 
     collision_cost::Float64 = -100.0
-    action_cost_lon::Float64 = -1.0
-    action_cost_lat::Float64 = -1.0
+    action_cost_lon::Float64 = -10.0
+    action_cost_lat::Float64 = -10.0
     goal_reward::Float64 = 0.0
     γ::Float64 = 0.95
     
@@ -114,7 +114,6 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
   #      r += (-3)
   #  end
    
-
    # r += abs(pomdp.desired_velocity-sp.ego_v) * (-20.0)
 
 
@@ -127,12 +126,12 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r += (-5)
     end
     
-    # stay in the center of the road
-   # if ( abs(s.ego_y) > 0 )
-   #     r += (-20) * abs(s.ego_y)
-   # end
+
+   
+   # stay in center of the road
    r += (10) * (1.0-abs(s.ego_y))
 
+   # keep velocity
    r += (10) * (pomdp.desired_velocity-abs(pomdp.desired_velocity-sp.ego_v))
 
     

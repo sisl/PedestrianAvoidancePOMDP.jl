@@ -16,11 +16,7 @@ using QMDP
 using JLD
 using Reel
 
-export 
-    FrenetPedestrianPOMDP,
-    SingleOCFPOMDP,
-    SingleOCFUpdater,
-    CrosswalkEnv
+
 
 include("pomdp_types.jl")
 include("spaces.jl")
@@ -33,6 +29,11 @@ include("helpers.jl")
 include("rendering.jl")
 
 
-
+export 
+    FrenetPedestrianPOMDP,
+    SingleOCFPOMDP,
+    SingleOCFUpdater,
+    CrosswalkEnv
+    
 
 end

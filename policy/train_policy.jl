@@ -23,12 +23,16 @@ addprocs(N_PROCS)
     include("../src/transition.jl")
     include("../src/observation.jl")
     include("../src/belief.jl")
-
+    include("../src/policy.jl")
     include("../src/frenet_pedestrian_pomdp.jl")
+    include("../src/helpers.jl")
+    include("../src/rendering.jl")
+
+    include("../src/PedestrianAvoidancePOMDP.jl")
     pomdp = SingleOCFPOMDP()
 end 
 
-solver = ParallelValueIterationSolver(n_procs=N_PROCS, max_iterations=200, belres=1e-4, include_Q=true, verbose=true)
+solver = ParallelValueIterationSolver(n_procs=N_PROCS, max_iterations=30, belres=1e-4, include_Q=true, verbose=true)
 
 
 vi_policy = solve(solver, pomdp)

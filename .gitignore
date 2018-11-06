@@ -2,3 +2,7 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+*.webm
+docs/.ipynb_checkpoints/
+policy/.ipynb_checkpoints/Policy_Server-checkpoint.ipynb
+
