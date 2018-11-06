@@ -22,7 +22,6 @@ export
     SingleOCFUpdater,
     CrosswalkEnv
 
-include("occluded_crosswalk_env.jl")
 include("pomdp_types.jl")
 include("spaces.jl")
 include("transition.jl")
@@ -31,6 +30,7 @@ include("belief.jl")
 include("policy.jl")
 include("frenet_pedestrian_pomdp.jl")
 include("helpers.jl")
+include("rendering.jl")
 
 
 

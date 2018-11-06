@@ -111,7 +111,8 @@ function AutomotiveDrivingModels.propagate(veh::Vehicle, action::LatLonAccel, ro
     # longitudional distance based on required velocity and lateral offset
 #    delta_x = sqrt(s_new^2 - delta_y^2 )
     y_ = veh.state.posG.y + delta_y
-    y_ = clamp(y_, pomdp.EGO_Y_MIN, pomdp.EGO_Y_MAX)
+    #y_ = clamp(y_, pomdp.EGO_Y_MIN, pomdp.EGO_Y_MAX)
+    y_ = clamp(y_, -1.0, 1.0)
 
 
     if v_ > 0
