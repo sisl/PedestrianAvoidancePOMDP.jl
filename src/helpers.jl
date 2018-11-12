@@ -73,8 +73,8 @@ end
 
 function getObstructionCorner(pomdp::SingleOCFPOMDP, obstacle::ConvexPolygon)
  
-    x = Vector{Float64}(obstacle.npts)
-    y = Vector{Float64}(obstacle.npts)
+    x = Vector{Float64}(undef, obstacle.npts)
+    y = Vector{Float64}(undef, obstacle.npts)
     for i = 1:obstacle.npts
         x[i] = obstacle.pts[i].x
         y[i] = obstacle.pts[i].y
