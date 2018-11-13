@@ -60,13 +60,12 @@ end
 function getEgoDataInStateSpace(pomdp::SingleOCFPOMDP, y::Float64, v::Float64)
     y_grid = RectangleGrid(pomdp.EGO_Y_RANGE)
     (id, weight) = interpolants(y_grid, [y])
-    id_max = indmax(weight)
-    ego_y = ind2x(y_grid, id[id_max])[1]
+
+    ego_y = ind2x(y_grid, findmax(id)[1])[1]
     
     v_grid = RectangleGrid(pomdp.EGO_V_RANGE)
     (id, weight) = interpolants(v_grid, [v])
-    id_max = indmax(weight)
-    ego_v = ind2x(v_grid, id[id_max])[1]
+    ego_v = ind2x(v_grid, findmax(id)[1])[1]
     return ego_y, ego_v
 end
 

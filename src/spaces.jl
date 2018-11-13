@@ -9,9 +9,7 @@ function POMDPs.state_index(pomdp::SingleOCFPOMDP, s::SingleOCFState)
     
     if s != pomdp.state_space[end]
         id_tmp = interpolants(pomdp.state_space_grid, [s.ego_y, s.ego_v, s.ped_s, s.ped_T, s.ped_theta, s.ped_v])
-        id_max = find(a->a==maximum(id_tmp[2]),id_tmp[2])
-
-        return id_tmp[1][id_max[1]]
+        return findmax(id_tmp[1])[1]
     else
         return n_states(pomdp)
     end
