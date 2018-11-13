@@ -1,5 +1,5 @@
 using PedestrianAvoidancePOMDP
-using Base.Test
+using Test
 
 @testset "PedestrianAvoidancePOMDP.jl" begin
     # Write your own tests here.

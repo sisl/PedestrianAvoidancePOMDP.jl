@@ -14,8 +14,10 @@ addprocs(N_PROCS)
     using StaticArrays
 
     using GridInterpolations 
-    using POMDPToolbox
-    using JLD
+    using POMDPModelTools
+    using POMDPPolicies
+    using FileIO
+    using JLD2
 
     
     include("../src/pomdp_types.jl")
@@ -39,5 +41,5 @@ vi_policy = solve(solver, pomdp)
 qmdp_policy = AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
 
 # save policy!
-JLD.save("policy.jld", "policy", qmdp_policy)
+save("policy.jld2", "policy", qmdp_policy)
 
