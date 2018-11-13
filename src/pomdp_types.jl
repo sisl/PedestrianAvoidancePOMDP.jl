@@ -48,32 +48,32 @@ const PEDESTRIAN_OFF_KEY = -1
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
     lateral_actions::Vector{Float64} = [1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
-    PED_A_RANGE::Vector{Float64} = LinRange(-2.0, 2.0, length=5)
-    PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., length=3)
+    PED_A_RANGE::Vector{Float64} = LinRange(-2.0, 2.0, 5)
+    PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
 
     EGO_Y_MIN::Float64 = -1.
     EGO_Y_MAX::Float64 = 1.
-    EGO_Y_RANGE::Vector{Float64} = LinRange(EGO_Y_MIN, EGO_Y_MAX, length=5)
+    EGO_Y_RANGE::Vector{Float64} = LinRange(EGO_Y_MIN, EGO_Y_MAX, 5)
 
     EGO_V_MIN::Float64 = 0.
     EGO_V_MAX::Float64 = 14.
-    EGO_V_RANGE::Vector{Float64} = LinRange(EGO_V_MIN, EGO_V_MAX, length=15)
+    EGO_V_RANGE::Vector{Float64} = LinRange(EGO_V_MIN, EGO_V_MAX, 15)
 
     S_MIN::Float64 = 0.
     S_MAX::Float64 = 50.
-    S_RANGE::Vector{Float64} = LinRange(S_MIN, S_MAX, length=26)
+    S_RANGE::Vector{Float64} = LinRange(S_MIN, S_MAX, 26)
 
     T_MIN::Float64 = -5.
     T_MAX::Float64 = 5.
-    T_RANGE::Vector{Float64} = LinRange(T_MIN, T_MAX, length=11)
+    T_RANGE::Vector{Float64} = LinRange(T_MIN, T_MAX, 11)
 
     PED_V_MIN::Float64 = 0.
     PED_V_MAX::Float64 = 2.
-    PED_V_RANGE::Vector{Float64} = LinRange(PED_V_MIN, PED_V_MAX, length=5)
+    PED_V_RANGE::Vector{Float64} = LinRange(PED_V_MIN, PED_V_MAX, 5)
 
     PED_THETA_MIN::Float64 = 1.57-1.57/2
     PED_THETA_MAX::Float64 = 1.57+1.57/2
-    PED_THETA_RANGE::Vector{Float64} = [1.57]# LinRange(PED_THETA_MIN, PED_THETA_MAX, length=7)
+    PED_THETA_RANGE::Vector{Float64} = [1.57]# LinRange(PED_THETA_MIN, PED_THETA_MAX, 7)
 
 
     collision_cost::Float64 = -100.0
