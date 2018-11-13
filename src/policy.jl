@@ -24,7 +24,7 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
     max_values = -Inf*ones(n_actions(p.pomdp))
     for i = 1:num_vectors
         temp_value = sparse_cat_dot(p.pomdp, p.alphas[i], b)
-        ai = action_index(p.pomdp, p.action_map[i])
+        ai = actionindex(p.pomdp, p.action_map[i])
         if ( temp_value > max_values[ai])
             max_values[ai] = temp_value
         end
@@ -38,7 +38,7 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
  function sparse_cat_dot(problem::POMDP, alpha::Vector{Float64}, b::SparseCat)
     val = 0.
     for (s, p) in weighted_iterator(b)
-        si = state_index(problem, s)
+        si = stateindex(problem, s)
         val += alpha[si]*p
     end
     return val
@@ -51,7 +51,7 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
     for i=1:n_actions(pomdp)
         res = 0.0
         for (j,s) in enumerate(b.vals)
-            si = state_index(pomdp, s)
+            si = stateindex(pomdp, s)
             res += alphas[i][si]*b.probs[j]
         end
         util[i] = res

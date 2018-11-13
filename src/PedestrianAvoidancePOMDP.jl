@@ -32,7 +32,10 @@ export
     FrenetPedestrianPOMDP,
     SingleOCFPOMDP,
     SingleOCFUpdater,
-    CrosswalkEnv
-    
+    SingleOCFBelief,
+    SingleOCFAction,
+    SingleOCFState,
+    CrosswalkEnv,
+    ObservationCallback
 
 end

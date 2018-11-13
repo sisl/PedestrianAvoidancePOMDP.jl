@@ -11,14 +11,14 @@ function get_observations_state_space(model::FrenetPedestrianPOMDP, ego::Vehicle
         delta_t = object_posF.t - ego.state.posF.t
         delta_theta = object_posF.ϕ - ego.state.posF.ϕ
             
-        if ( delta_s < pomdp.S_MAX && delta_s > pomdp.S_MIN && delta_t < pomdp.T_MAX  &&  delta_t > pomdp.T_MIN )
+        if ( delta_s < model.pomdp.S_MAX && delta_s > model.pomdp.S_MIN && delta_t < model.pomdp.T_MAX  &&  delta_t > model.pomdp.T_MIN )
             o[object.id] = SingleOCFState(ego.state.posF.t, ego.state.v, delta_s, delta_t, delta_theta, object.state.v)
         end
 
        # println("PED: t: ", object_posF.t, " / ego: t: ", ego.state.posF.t, " s: ", ego.state.posF.s)
        # println("delta_s: ", delta_s, " delta_t: ", delta_t)
     end
-    o[PEDESTRIAN_OFF_KEY] = get_state_absent(pomdp, ego.state.posF.t, ego.state.v)
+    o[PEDESTRIAN_OFF_KEY] = get_state_absent(model.pomdp, ego.state.posF.t, ego.state.v)
     return o
 end
 

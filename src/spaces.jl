@@ -5,7 +5,7 @@ function POMDPs.states(pomdp::SingleOCFPOMDP)
     return pomdp.state_space
 end
 
-function POMDPs.state_index(pomdp::SingleOCFPOMDP, s::SingleOCFState)
+function POMDPs.stateindex(pomdp::SingleOCFPOMDP, s::SingleOCFState)
     
     if s != pomdp.state_space[end]
         id_tmp = interpolants(pomdp.state_space_grid, [s.ego_y, s.ego_v, s.ped_s, s.ped_T, s.ped_theta, s.ped_v])
@@ -34,7 +34,7 @@ function POMDPs.n_actions(pomdp::SingleOCFPOMDP)
 end
 
 
-function POMDPs.action_index(pomdp::SingleOCFPOMDP, a::SingleOCFAction)
+function POMDPs.actionindex(pomdp::SingleOCFPOMDP, a::SingleOCFAction)
     
     lateral_id = 0;
     if a.lateral_movement > 0
@@ -74,8 +74,8 @@ function POMDPs.observations(pomdp::SingleOCFPOMDP)
 end
 
 
-function POMDPs.obs_index(pomdp::SingleOCFPOMDP, o::SingleOCFObs)
-    return state_index(pomdp, o)
+function POMDPs.obsindex(pomdp::SingleOCFPOMDP, o::SingleOCFObs)
+    return stateindex(pomdp, o)
 end
 
 

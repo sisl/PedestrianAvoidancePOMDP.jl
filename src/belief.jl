@@ -7,8 +7,9 @@ const SingleOCFBelief = SparseCat{Vector{SingleOCFState},Vector{Float64}}
 
 
 
-function POMDPs.update(up::SingleOCFUpdater, bold::Dict{Int64, SingleOCFBelief}, a::SingleOCFAction, o::Dict{Int64, SingleOCFObs})
+function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, bold::Dict{Int64, SingleOCFBelief}, a::SingleOCFAction, o::Dict{Int64, SingleOCFObs})
     bnew = Dict{Int64, SingleOCFBelief}()
+    
     for oid in keys(o)
 
         if haskey(bold, oid) && oid != PEDESTRIAN_OFF_KEY  # old measurment
@@ -236,7 +237,7 @@ function initBeliefPedestrian(pomdp::SingleOCFPOMDP, o::SingleOCFObs)
             for ds = -1.0:1.0:1.0
                 for dT = -1.0:1.0:1.0
                     obs = SingleOCFState(ego_y_state_space, ego_v_state_space, o.ped_s+ds, o.ped_T+dT, ped_theta, ped_v)
-                    obs_int = pomdp.state_space[state_index(pomdp, obs)]
+                    obs_int = pomdp.state_space[stateindex(pomdp, obs)]
                     push!(states, obs_int) 
                 end
             end

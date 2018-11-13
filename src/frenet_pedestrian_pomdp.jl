@@ -35,7 +35,7 @@ end
 function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::Scene, roadway::Roadway, egoid::Int)
 
     ego = scene[findfirst(egoid, scene)]
-    pomdp.ego_vehicle = ego
+    model.pomdp.ego_vehicle = ego
     model.ego_vehicle = ego
 
     # get observations from sensor, only visible objects with sensor noise
@@ -43,7 +43,7 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
    
     # initialization of the belief for the absent state
     if (model.t_current == 0 )
-        model.b_dict[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(pomdp, ego.state.posF.t, ego.state.v)
+        model.b_dict[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(model.pomdp, ego.state.posF.t, ego.state.v)
     end
 
     ################ High Level Planner ###################################################
@@ -56,7 +56,7 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
         observations = get_observations_state_space(model, ego, model.sensor_observations)
 
         # update belief dictionary
-        b_new = update(model.updater, model.b_dict, SingleOCFAction(model.a.a_lon, model.a.a_lat), observations)
+        b_new = update(model.pomdp, model.updater, model.b_dict, SingleOCFAction(model.a.a_lon, model.a.a_lat), observations)
         model.b_dict = deepcopy(b_new)
         # use policy and belief dictionary to calculate next action
         act = action(model.policy_dec, model.b_dict)
