@@ -34,7 +34,7 @@ end
 
 function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::Scene, roadway::Roadway, egoid::Int)
 
-    ego = scene[findfirst(scene, egoid)]
+    ego = scene[findfirst(egoid, scene)]
     pomdp.ego_vehicle = ego
     model.ego_vehicle = ego
 
@@ -163,7 +163,7 @@ return true if the ego car is in collision in the given scene, do not check for 
 other participants
 """
 function is_crash(scene::Scene)
-    ego = scene[findfirst(scene, 1)]
+    ego = scene[findfirst(1, scene)]
     @assert ego.id == 1
     if ego.state.v ≈ 0
         return false
