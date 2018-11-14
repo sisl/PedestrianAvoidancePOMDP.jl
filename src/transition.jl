@@ -69,7 +69,7 @@ function POMDPs.transition(pomdp::SingleOCFPOMDP, s::SingleOCFState, a::SingleOC
         # add roughening
         if length(probs) > 1
             normalize!(probs, 1)
-            probs += maximum(probs)
+            probs .+= maximum(probs)
             normalize!(probs,1)
         end
         return SingleOCFBelief(states,probs)

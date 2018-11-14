@@ -17,7 +17,7 @@
      for b_id in keys(b_dict)
          for (s, prob) in weighted_iterator( b_dict[b_id])
  
-             ped = Vehicle(VehicleState(VecSE2(s.ped_s+ego.def.length/2+AutomotivePOMDPs.PEDESTRIAN_DEF.width/2, s.ped_T, s.ped_theta), 0.), VehicleDef(AutomotivePOMDPs.PEDESTRIAN_DEF), 1)
+             ped = Vehicle(VehicleState(VecSE2(s.ped_s+ego.def.length/2+AutomotivePOMDPs.PEDESTRIAN_DEF.width/2, s.ped_T, s.ped_theta), 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, 1)
              if prob > 1e-6
                  prob_color = RGBA(0.0, 0.0, 1.0, prob*10)
                  add_instruction!(rendermodel, render_vehicle, (ego.state.posG.x+ped.state.posG.x, ego.state.posG.y+ped.state.posG.y, ego.state.posG.θ + ped.state.posG.θ, ped.def.length, ped.def.width, prob_color))
@@ -45,7 +45,7 @@
        #  max_speed = 14.0
        #  histogram_overlay = HistogramOverlay(pos = VecE2(15.0, 10.0), val=ego_vehicle[frame_index].state.v/max_speed, label="v speed")
  
-         return render(rec[frame_index-nframes(rec)], env, [belief_overlay, sensor_overlay, occlusion_overlay, text_overlay, IDOverlay()], cam=cam)
+         return AutoViz.render(rec[frame_index-nframes(rec)], env, [belief_overlay, sensor_overlay, occlusion_overlay, text_overlay, IDOverlay()], cam=cam)
  
      end
      return duration, fps, render_rec

@@ -106,16 +106,21 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     
     r = 0.
 
-    #object_b_def.length = object_b_def.length + pomdp.PED_SAFETY_DISTANCE
-    #object_b_def.width  = object_b_def.width + pomdp.PED_SAFETY_DISTANCE
-
+    # is there a collision?
+    if collision_checker(pomdp,sp)
+        r += pomdp.collision_cost
+    end
+    
+    # is the goal reached?
+    if sp.ped_s == 0
+        r += pomdp.goal_reward
+    end
+    
     # keep velocity
-  #  if (action.acc > 0.0 && sp.ego_v > pomdp.desired_velocity )
-  #      r += (-3)
-  #  end
+ #   if (action.acc > 0.0 && sp.ego_v > pomdp.desired_velocity )
+ #       r += (-3)
+ #   end
    
-   # r += abs(pomdp.desired_velocity-sp.ego_v) * (-20.0)
-
 
     # do not leave lane
     if (action.lateral_movement >= 0.1 && sp.ego_y >= pomdp.EGO_Y_MAX )
@@ -127,25 +132,20 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     end
     
 
-   
    # stay in center of the road
-   r += (10) * (1.0-abs(s.ego_y))
+    r_lane = (10) * abs(1-s.ego_y)
+    r += r_lane
 
-   # keep velocity
-   r += (10) * (pomdp.desired_velocity-abs(pomdp.desired_velocity-sp.ego_v))
-
-    
-    # is there a collision?
-    if collision_checker(pomdp,sp)
-        r += pomdp.collision_cost
-    end
-    
-    # is the goal reached?
-    if sp.ped_s == 0
-        r += pomdp.goal_reward
+ 
+    # keep velocity
+    r_vel = (1) * ( pomdp.desired_velocity-abs(pomdp.desired_velocity-sp.ego_v))
+    if ( sp.ego_v > pomdp.desired_velocity)
+        r_vel = 0.
     end
 
-
+    r += r_vel
+    
+#=
     # costs for longitudinal actions
     if action.acc > 0. ||  action.acc < 0.0
         r += pomdp.action_cost_lon * abs(action.acc)*2
@@ -156,11 +156,14 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r += pomdp.action_cost_lat * abs(action.lateral_movement) 
     end
 
-
-   if abs(action.acc) > 0 && abs(action.lateral_movement) > 0
+=#
+    if abs(action.acc) > 0 && abs(action.lateral_movement) > 0
         r += (-10)
-   end
+    end
     
+   # println("velocity: ", r_vel ) 
+   # println("lane: ", r_lane)
+
     return r
     
 end
@@ -194,10 +197,9 @@ function AutomotivePOMDPs.collision_checker(pomdp::SingleOCFPOMDP, s::SingleOCFS
     object_a_def = pomdp.ego_type
     object_b_def = pomdp.ped_type
 
-    center_a = VecSE2(0.0, 0.0, 0.0)
+    center_a = VecSE2(-object_a_def.length/2, s.ego_y, 0.0)
     center_b = VecSE2(s.ped_s, s.ped_T, s.ped_theta)
     
-
     # first fast check:
     @fastmath begin
         Δ = sqrt((center_a.x - center_b.x)^2 + (center_a.y - center_b.y)^2)

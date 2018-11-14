@@ -10,8 +10,14 @@ struct DecPolicy{P <: Policy, M <: Union{MDP, POMDP}, A} <: Policy
 
  function POMDPs.action(p::DecPolicy, b::Dict)
     vals = action_values(p, b)
-    ai = indmax(vals)
-    return p.action_map[ai]
+    #ai = indmax(vals)
+    #return p.action_map[ai]
+    ai = findmax(vals)
+    println("action_values: ", vals)
+    println("action_index_max: ", ai)
+    println("p.action_map[ai[2]]: ", p.action_map[ai[2]])
+    #return  findmax(vals)
+    return p.action_map[ai[2]]
  end
 
 function action_values(policy::DecPolicy, dec_belief::Dict) 
@@ -47,15 +53,18 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
 
  function AutomotivePOMDPs.action(policy::AlphaVectorPolicy, b::SingleOCFBelief)
     alphas = policy.alphas 
-    util = zeros(n_actions(pomdp)) 
-    for i=1:n_actions(pomdp)
+    util = zeros(n_actions(policy.pomdp)) 
+    for i=1:n_actions(policy.pomdp)
         res = 0.0
         for (j,s) in enumerate(b.vals)
-            si = stateindex(pomdp, s)
+            si = stateindex(policy.pomdp, s)
             res += alphas[i][si]*b.probs[j]
         end
         util[i] = res
     end
-    ihi = indmax(util)
+    ihi = findmax(util)[2]
+    #println(ihi)
+    #println(util)
+    #println(policy.action_map[ihi])
     return policy.action_map[ihi]
 end

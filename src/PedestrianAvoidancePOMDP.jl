@@ -14,8 +14,7 @@ using POMDPPolicies
 using QMDP
 using JLD2
 using Reel
-
-
+using LinearAlgebra
 
 include("pomdp_types.jl")
 include("spaces.jl")
@@ -36,6 +35,7 @@ export
     SingleOCFAction,
     SingleOCFState,
     CrosswalkEnv,
-    ObservationCallback
+    ObservationCallback,
+    animate_record
 
 end

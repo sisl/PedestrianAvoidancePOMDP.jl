@@ -13,30 +13,28 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, bold::Dict{I
     for oid in keys(o)
 
         if haskey(bold, oid) && oid != PEDESTRIAN_OFF_KEY  # old measurment
-           @time bnew[oid] = update(up, bold[oid], a, o[oid])
+           bnew[oid] = update(pomdp, up, bold[oid], a, o[oid])
 
         elseif oid == PEDESTRIAN_OFF_KEY  # absent state
-
             bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(pomdp, o[oid].ego_y, o[oid].ego_v) 
-          #  bnew[PEDESTRIAN_OFF_KEY] = update(up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
+          #  bnew[PEDESTRIAN_OFF_KEY] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
            # bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrianBorder(pomdp, o[oid].ego_y, o[oid].ego_v) 
 
         else # ped appeared
-            bnew[oid] = update(up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
+            bnew[oid] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
         end
     end
 
     return bnew
 end
 
-function POMDPs.update(up::SingleOCFUpdater, b::SingleOCFBelief, a::SingleOCFAction, o::SingleOCFObs)
+function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, b::SingleOCFBelief, a::SingleOCFAction, o::SingleOCFObs)
 
     states_p = SingleOCFState[]
     sizehint!(states_p, 1000);
 
     bp = Float64[] 
     sizehint!(bp, 1000);
-    
     
     (ego_y_state_space, ego_v_state_space) = getEgoDataInStateSpace(pomdp, o.ego_y, o.ego_v)
 
@@ -173,7 +171,7 @@ function initBeliefAbsentPedestrianBorder(pomdp::SingleOCFPOMDP, ego_y::Float64,
     push!(states, absent_state)
 
     probs = ones(length(states))
-    probs[1:end - 1] = pomdp.pedestrian_birth / length(states)
+    probs[1:end - 1] .= pomdp.pedestrian_birth / length(states)
     probs[end] = 1.0 - pomdp.pedestrian_birth
 
     return SingleOCFBelief(states,probs)
