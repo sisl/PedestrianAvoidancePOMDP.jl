@@ -1,6 +1,6 @@
 ### Observation model  ############################################################################
 
-
+using LinearAlgebra
 
 function observation_weight(pomdp::SingleOCFPOMDP, sp::SingleOCFState, o::SingleOCFObs)
 
@@ -35,7 +35,9 @@ function observation_weight(pomdp::SingleOCFPOMDP, sp::SingleOCFState, o::Single
 
     if ( !o_absent && !sp_absent && !o_absent )       # visible
 
-        std_obs = 0.2*Matrix{Float64}(I, 4, 4)
+        std_obs = zeros(Float64, 4, 4)
+        std_obs[1,1] = 0.2        # theta
+        std_obs[2,2] = 0.2        # theta
         std_obs[3,3] = 0.2        # theta
         std_obs[4,4] = 0.2        # velocity
         ob_dist = MultivariateNormal([sp.ped_s, sp.ped_T, sp.ped_theta ,sp.ped_v], std_obs)

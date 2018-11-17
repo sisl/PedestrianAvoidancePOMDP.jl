@@ -46,7 +46,7 @@ const PEDESTRIAN_OFF_KEY = -1
     ego_type::VehicleDef = VehicleDef()
     ped_type::VehicleDef = VehicleDef(AgentClass.PEDESTRIAN, 1.0 + 2.0*PED_SAFETY_DISTANCE, 1. + 2.0*PED_SAFETY_DISTANCE)
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
-    lateral_actions::Vector{Float64} = [1.0, 0.0, -1.0]
+    lateral_actions::Vector{Float64} = [0] #[1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
     PED_A_RANGE::Vector{Float64} = LinRange(-2.0, 2.0, 5)
     PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
@@ -122,6 +122,7 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
  #   end
    
 
+#=
     # do not leave lane
     if (action.lateral_movement >= 0.1 && sp.ego_y >= pomdp.EGO_Y_MAX )
         r += (-5)
@@ -144,7 +145,8 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     end
 
     r += r_vel
-    
+=#
+
 #=
     # costs for longitudinal actions
     if action.acc > 0. ||  action.acc < 0.0
@@ -157,10 +159,13 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     end
 
 =#
+
+#=
     if abs(action.acc) > 0 && abs(action.lateral_movement) > 0
         r += (-10)
     end
-    
+=#
+  
    # println("velocity: ", r_vel ) 
    # println("lane: ", r_lane)
 

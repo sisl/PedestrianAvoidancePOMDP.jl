@@ -14,7 +14,8 @@ using POMDPPolicies
 using QMDP
 using JLD2
 using Reel
-using LinearAlgebra
+using EmergencyBrakingSystem
+
 
 include("pomdp_types.jl")
 include("spaces.jl")
@@ -25,6 +26,7 @@ include("policy.jl")
 include("frenet_pedestrian_pomdp.jl")
 include("helpers.jl")
 include("rendering.jl")
+include("pedestrian_avoidance.jl")
 
 
 export 
@@ -36,6 +38,8 @@ export
     SingleOCFState,
     CrosswalkEnv,
     ObservationCallback,
-    animate_record
+    ObservationPedestrianAvoidanceCallback,
+    animate_record,
+    PedestrianSystem
 
 end

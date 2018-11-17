@@ -37,9 +37,11 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
     ego = scene[findfirst(egoid, scene)]
     model.pomdp.ego_vehicle = ego
     model.ego_vehicle = ego
+    sensor = PerfectSensor()
+    model.sensor_observations = measure(sensor, ego, scene, roadway, model.obstacles)
 
-    # get observations from sensor, only visible objects with sensor noise
-    model.sensor_observations = measure(model.sensor, ego, scene, roadway, model.obstacles)
+#    # get observations from sensor, only visible objects with sensor noise
+#    model.sensor_observations = measure(model.sensor, ego, scene, roadway, model.obstacles)
    
     # initialization of the belief for the absent state
     if (model.t_current == 0 )
@@ -66,10 +68,13 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
         model.a = LatLonAccel(act[2], act[1])
 
 
+        model.a = LatLonAccel(1.0, a_lon)
+
         # dummy implementation for one belief
-#= 
+
         if ( haskey(model.b_dict, 2) )
-            
+            println("-> perfect observation: ", observations[2])
+#= 
             model.b = model.b_dict[2]
             
             println("-> perfect observation: ", observations[2])
@@ -80,8 +85,9 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
             act = action(model.policy, model.b) # policy
             model.a = LatLonAccel(act.lateral_movement, act.acc)
             println("action (ped1): ", model.a )
+=#            
         end
-=#
+
         
         # dummy functionality to test transition function / belief update
         #=
@@ -174,6 +180,7 @@ function is_crash(scene::Scene)
     for veh in scene
         if veh.id != 1
             if AutomotivePOMDPs.is_colliding(ego, veh)
+                println(veh)
                 println("-----------------> Collision <----------------------")
                 return true
             end

@@ -13,9 +13,9 @@ struct DecPolicy{P <: Policy, M <: Union{MDP, POMDP}, A} <: Policy
     #ai = indmax(vals)
     #return p.action_map[ai]
     ai = findmax(vals)
-    println("action_values: ", vals)
-    println("action_index_max: ", ai)
-    println("p.action_map[ai[2]]: ", p.action_map[ai[2]])
+  #  println("action_values: ", vals)
+  #  println("action_index_max: ", ai)
+ #   println("p.action_map[ai[2]]: ", p.action_map[ai[2]])
     #return  findmax(vals)
     return p.action_map[ai[2]]
  end

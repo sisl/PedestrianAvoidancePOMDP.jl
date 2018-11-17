@@ -17,9 +17,20 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, bold::Dict{I
 
         elseif oid == PEDESTRIAN_OFF_KEY  # absent state
             bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(pomdp, o[oid].ego_y, o[oid].ego_v) 
-          #  bnew[PEDESTRIAN_OFF_KEY] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
+           # bnew[PEDESTRIAN_OFF_KEY] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
            # bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrianBorder(pomdp, o[oid].ego_y, o[oid].ego_v) 
+           b_states = []
+           b_prob = []
+           for (s, prob) in weighted_iterator(bnew[PEDESTRIAN_OFF_KEY] )
+               if ( prob > 1e-4)
+                   push!(b_states, s)
+                   push!(b_prob, prob)
+               end
+           end
+           normalize!(b_prob, 1)
 
+           bnew[PEDESTRIAN_OFF_KEY] =  SingleOCFBelief(b_states, b_prob)  
+            println(bnew[PEDESTRIAN_OFF_KEY])
         else # ped appeared
             bnew[oid] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
         end
