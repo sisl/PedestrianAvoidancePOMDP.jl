@@ -60,21 +60,38 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
         # update belief dictionary
         b_new = update(model.pomdp, model.updater, model.b_dict, SingleOCFAction(model.a.a_lon, model.a.a_lat), observations)
         model.b_dict = deepcopy(b_new)
+        #println("dict: ", model.b_dict)
+        b_dict_tmp = b_new
+        
+        # change the absent state to a valid state where:  s = 50 and t = 5
+       # b_dict_tmp[PEDESTRIAN_OFF_KEY] = set
+        b_mod = []
+        p_mod = []
+        for (s, prob) in weighted_iterator(b_dict_tmp[PEDESTRIAN_OFF_KEY])
+            if ( s[3] == -10 )
+                s_tmp = SingleOCFState(s[1], s[2], model.pomdp.S_MAX, model.pomdp.T_MAX, 0. , 0.)  
+                println("---------> modified: ",s_tmp)
+                push!(b_mod, s_tmp)
+            else
+                push!(b_mod, s)
+            end
+            push!(p_mod, prob)
+        end
+        b_dict_tmp[PEDESTRIAN_OFF_KEY] = SingleOCFBelief(b_mod, p_mod)
+        println("dict-modified: ", b_dict_tmp)
 
-
+        
         # use policy and belief dictionary to calculate next action
-        act = action(model.policy_dec, model.b_dict)
-        println("action combined: ", act)
-        model.a = LatLonAccel(act[2], act[1])
+        act = action(model.policy_dec, b_dict_tmp)
+       # act = action(model.policy_dec, model.b_dict)
+        model.a = LatLonAccel(act.lateral_movement, act.acc)
+        println("action combined: ", model.a)
 
 
-        model.a = LatLonAccel(1.0, a_lon)
 
         # dummy implementation for one belief
+#=        if ( haskey(model.b_dict, 2) )
 
-        if ( haskey(model.b_dict, 2) )
-            println("-> perfect observation: ", observations[2])
-#= 
             model.b = model.b_dict[2]
             
             println("-> perfect observation: ", observations[2])
@@ -84,10 +101,10 @@ function AutomotiveDrivingModels.observe!(model::FrenetPedestrianPOMDP, scene::S
 
             act = action(model.policy, model.b) # policy
             model.a = LatLonAccel(act.lateral_movement, act.acc)
-            println("action (ped1): ", model.a )
-=#            
+            println("action (ped1): ", model.a ) 
         end
-
+=#
+  
         
         # dummy functionality to test transition function / belief update
         #=

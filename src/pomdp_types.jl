@@ -48,7 +48,7 @@ const PEDESTRIAN_OFF_KEY = -1
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
     lateral_actions::Vector{Float64} = [0] #[1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
-    PED_A_RANGE::Vector{Float64} = LinRange(-2.0, 2.0, 5)
+    PED_A_RANGE::Vector{Float64} = LinRange(-1.0, 1.0, 3)
     PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
 
     EGO_Y_MIN::Float64 = -1.
@@ -59,9 +59,9 @@ const PEDESTRIAN_OFF_KEY = -1
     EGO_V_MAX::Float64 = 14.
     EGO_V_RANGE::Vector{Float64} = LinRange(EGO_V_MIN, EGO_V_MAX, 15)
 
-    S_MIN::Float64 = 0.
+    S_MIN::Float64 = -2.
     S_MAX::Float64 = 50.
-    S_RANGE::Vector{Float64} = LinRange(S_MIN, S_MAX, 26)
+    S_RANGE::Vector{Float64} = LinRange(S_MIN, S_MAX, 27)
 
     T_MIN::Float64 = -5.
     T_MAX::Float64 = 5.
@@ -109,17 +109,24 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     # is there a collision?
     if collision_checker(pomdp,sp)
         r += pomdp.collision_cost
+    #    else  # no collision
+        # is the goal reached?
+      #  if sp.ped_s <= 0
+      #      r += pomdp.goal_reward
+      #  end 
+        return r
     end
     
-    # is the goal reached?
-    if sp.ped_s == 0
-        r += pomdp.goal_reward
-    end
+
     
     # keep velocity
- #   if (action.acc > 0.0 && sp.ego_v > pomdp.desired_velocity )
- #       r += (-3)
- #   end
+    if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
+        r += (-100)
+    end
+    
+#    if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
+#        r += 5
+#    end
    
 
 #=
@@ -137,15 +144,19 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     r_lane = (10) * abs(1-s.ego_y)
     r += r_lane
 
- 
+ =#
     # keep velocity
-    r_vel = (1) * ( pomdp.desired_velocity-abs(pomdp.desired_velocity-sp.ego_v))
-    if ( sp.ego_v > pomdp.desired_velocity)
-        r_vel = 0.
-    end
+   # r_vel = (1) * ( -abs(pomdp.desired_velocity-sp.ego_v))
+  #  if ( sp.ego_v > pomdp.desired_velocity)
+  #      r_vel = 0.
+  #  end
 
-    r += r_vel
-=#
+  #  r += r_vel
+
+    
+  #  if ( abs(pomdp.desired_velocity-sp.ego_v) < 1. )
+   #     r += 20
+  #  end
 
 #=
     # costs for longitudinal actions
@@ -204,7 +215,10 @@ function AutomotivePOMDPs.collision_checker(pomdp::SingleOCFPOMDP, s::SingleOCFS
 
     center_a = VecSE2(-object_a_def.length/2, s.ego_y, 0.0)
     center_b = VecSE2(s.ped_s, s.ped_T, s.ped_theta)
-    
+    println(object_a_def)
+    println(object_b_def)
+    println(center_a)
+    println(center_b)
     # first fast check:
     @fastmath begin
         Δ = sqrt((center_a.x - center_b.x)^2 + (center_a.y - center_b.y)^2)

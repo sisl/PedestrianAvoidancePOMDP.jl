@@ -30,7 +30,7 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, bold::Dict{I
            normalize!(b_prob, 1)
 
            bnew[PEDESTRIAN_OFF_KEY] =  SingleOCFBelief(b_states, b_prob)  
-            println(bnew[PEDESTRIAN_OFF_KEY])
+           #println(bnew[PEDESTRIAN_OFF_KEY])
         else # ped appeared
             bnew[oid] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
         end
@@ -114,6 +114,7 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, b::SingleOCF
 
 
     println("b-length: ", length(states_p))
+    println(states_p)
     return SingleOCFBelief(states_p, bp)  
 
 #=
