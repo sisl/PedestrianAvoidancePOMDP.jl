@@ -3,16 +3,23 @@ function get_observations_state_space(model::FrenetPedestrianPOMDP, ego::Vehicle
 
     o = Dict{Int64, SingleOCFObs}()
     for object in sensor_observations
-        println(object)    
+        
         object_posF = Frenet(proj(object.state.posG, get_lane(model.env.roadway, ego.state), 
                                     model.env.roadway, move_along_curves=false), model.env.roadway)
             
         delta_s = object_posF.s - ego.state.posF.s - ego.def.length/2 - object.def.width/2
         delta_t = object_posF.t - ego.state.posF.t
         delta_theta = object_posF.ϕ - ego.state.posF.ϕ
-            
-        if ( delta_s < model.pomdp.S_MAX && delta_s > model.pomdp.S_MIN && delta_t < model.pomdp.T_MAX  &&  delta_t > model.pomdp.T_MIN )
+           
+         if ( AutomotivePOMDPs.is_observable_fixed(ego.state, VehicleState(VecSE2(ego.state.posG.x+delta_s, ego.state.posG.y+delta_t, 0.), 0.0), model.pomdp.env) == false )
+            occluded = true
+        else
+            occluded = false
+        end
+        
+        if ( occluded == false && delta_s < model.pomdp.S_MAX && delta_s > model.pomdp.S_MIN && delta_t < model.pomdp.T_MAX  &&  delta_t > model.pomdp.T_MIN )
             o[object.id] = SingleOCFState(ego.state.posF.t, ego.state.v, delta_s, delta_t, delta_theta, object.state.v)
+            println(o[object.id])    
         end
 
        # println("PED: t: ", object_posF.t, " / ego: t: ", ego.state.posF.t, " s: ", ego.state.posF.s)

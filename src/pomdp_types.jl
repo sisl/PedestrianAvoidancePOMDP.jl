@@ -42,7 +42,7 @@ const PEDESTRIAN_OFF_KEY = -1
 
 @with_kw mutable struct SingleOCFPOMDP <: POMDP{SingleOCFState, SingleOCFAction, SingleOCFObs}
     env::CrosswalkEnv = CrosswalkEnv()
-    PED_SAFETY_DISTANCE::Float64 = 1.0
+    PED_SAFETY_DISTANCE::Float64 = 1.5
     ego_type::VehicleDef = VehicleDef()
     ped_type::VehicleDef = VehicleDef(AgentClass.PEDESTRIAN, 1.0 + 2.0*PED_SAFETY_DISTANCE, 1. + 2.0*PED_SAFETY_DISTANCE)
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
@@ -76,9 +76,9 @@ const PEDESTRIAN_OFF_KEY = -1
     PED_THETA_RANGE::Vector{Float64} = [1.57]# LinRange(PED_THETA_MIN, PED_THETA_MAX, 7)
 
 
-    collision_cost::Float64 = -100.0
-    action_cost_lon::Float64 = -10.0
-    action_cost_lat::Float64 = -10.0
+    collision_cost::Float64 = -200.0
+    action_cost_lon::Float64 = -1.0
+    action_cost_lat::Float64 = -1.0
     goal_reward::Float64 = 0.0
     γ::Float64 = 0.95
     
@@ -94,9 +94,9 @@ const PEDESTRIAN_OFF_KEY = -1
 
     ego_vehicle::Vehicle = Vehicle(VehicleState(VecSE2(0.0, 0.0, 0.0), 0.0), VehicleDef(), 1)
 
-    desired_velocity::Float64 = 40.0 / 3.6
+    desired_velocity::Float64 = 50.0 / 3.6
 
-    pedestrian_birth::Float64 = 0.8
+    pedestrian_birth::Float64 = 0.6
 end
 
 
@@ -121,12 +121,12 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     
     # keep velocity
     if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
-        r += (-100)
+        r += (-10)
     end
     
-#    if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
-#        r += 5
-#    end
+    if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
+        r += 5
+    end
    
 
 #=
@@ -163,12 +163,11 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     if action.acc > 0. ||  action.acc < 0.0
         r += pomdp.action_cost_lon * abs(action.acc)*2
     end
-        
+ 
     # costs for lateral actions
     if abs(action.lateral_movement) > 0 
         r += pomdp.action_cost_lat * abs(action.lateral_movement) 
     end
-
 =#
 
 #=
@@ -215,10 +214,7 @@ function AutomotivePOMDPs.collision_checker(pomdp::SingleOCFPOMDP, s::SingleOCFS
 
     center_a = VecSE2(-object_a_def.length/2, s.ego_y, 0.0)
     center_b = VecSE2(s.ped_s, s.ped_T, s.ped_theta)
-    println(object_a_def)
-    println(object_b_def)
-    println(center_a)
-    println(center_b)
+
     # first fast check:
     @fastmath begin
         Δ = sqrt((center_a.x - center_b.x)^2 + (center_a.y - center_b.y)^2)

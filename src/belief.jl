@@ -113,8 +113,8 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, b::SingleOCF
     end
 
 
-    println("b-length: ", length(states_p))
-    println(states_p)
+   # println("b-length: ", length(states_p))
+  #  println(states_p)
     return SingleOCFBelief(states_p, bp)  
 
 #=
