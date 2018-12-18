@@ -37,10 +37,10 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
     ego = scene[findfirst(egoid, scene)]
     model.ego_vehicle = ego
 
-    println("model.t_current: ", model.t_current)
+    #println("model.t_current: ", model.t_current)
 
     ################ Emergency Braking System #############################################
-    println("-> emergency braking system")
+    #println("-> emergency braking system")
     observe!(model.emergency_braking_system, scene, roadway, egoid)
     model.prediction_obstacle = model.emergency_braking_system.prediction_obstacle
     model.brake_request = model.emergency_braking_system.brake_request
@@ -49,11 +49,11 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
 
     ################ High Level Planner ###################################################
     if (  model.tick % model.update_tick_high_level_planner == 0 )
-        println("--------------------------POMDP high level planner----------------------- t: ", model.t_current)    
+        #println("--------------------------POMDP high level planner----------------------- t: ", model.t_current)    
         observe!(model.pedestrian_pomdp_frenet, scene, roadway, egoid)
         act = action(model.pedestrian_pomdp_frenet.policy_dec, model.pedestrian_pomdp_frenet.b_dict)
         model.pedestrian_pomdp_frenet.a = LatLonAccel(act.lateral_movement, act.acc)
-        println("Action high-level-planner: ", model.pedestrian_pomdp_frenet.a)
+       # println("Action high-level-planner: ", model.pedestrian_pomdp_frenet.a)
         model.b_dict = model.pedestrian_pomdp_frenet.b_dict
     end
     
@@ -75,7 +75,7 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
     end
 
     model.a = LatLonAccel(a_lat, a_lon) 
-    println("Action combined: ", model.a)
+    #println("Action combined: ", model.a)
 
     model.tick += 1
     model.t_current = model.t_current + model.timestep 

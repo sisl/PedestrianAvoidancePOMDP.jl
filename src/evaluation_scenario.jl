@@ -149,7 +149,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
         # definition of the pedestrian avoidance system (pomdp + emergency braking system)
         models[ego_id] = PedestrianAvoidanceSystem(
-            frenet_pedestrian_pomdp=pedestrian_pomdp_frenet,
+            pedestrian_pomdp_frenet=pedestrian_pomdp_frenet,
             emergency_braking_system=emergency_braking_system,
             timestep=timestep,
             update_tick_high_level_planner=timestep_pomdp / timestep,
@@ -204,7 +204,8 @@ function evaluateScenarioMetric(ego_vehicle, emergency_brake_request, ego_a, col
         if (ego_vehicle[i].state.v > 0)
             push!(v,ego_vehicle[i].state.v)
         end
-         if (ego_a[i] != 0.)
+        
+        if (ego_a[i] != 0. && ego_a[i] < 0.)
             push!(a,ego_a[i])
         end   
         

@@ -27,7 +27,7 @@
 
 
 
-    b::SingleOCFBelief = SingleOCFBelief()
+    b::SingleOCFBelief = SingleOCFBelief([],[])
     b_dict::Dict{Int64, SingleOCFBelief} = Dict{Int64, SingleOCFBelief}()
 
     prediction_obstacle::Array{Float64} = []
@@ -108,35 +108,30 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
 end
 
 
-# TODO: implementation in Frenet Frame, correction lateral movement into longitudinal velocity
 function AutomotiveDrivingModels.propagate(veh::Vehicle, action::LatLonAccel, roadway::Roadway, Δt::Float64)
 
     # new velocity
     v_ = veh.state.v + action.a_lon*Δt
-    v_ = clamp(v_, 0, v_)
+    v_ = clamp(v_, 0., v_)
 
     # lateral offset
     delta_y = action.a_lat * Δt   # a_lat corresponds to lateral velocity --> a_lat == v_lat
     if v_ <= 0.
         delta_y = 0.
     end
+    y_ = veh.state.posG.y + delta_y
+    y_ = clamp(y_, -1.0, 1.0)
+
     s_new = v_ * Δt
 
     # longitudional distance based on required velocity and lateral offset
-#    delta_x = sqrt(s_new^2 - delta_y^2 )
-    y_ = veh.state.posG.y + delta_y
-    #y_ = clamp(y_, pomdp.EGO_Y_MIN, pomdp.EGO_Y_MAX)
-    y_ = clamp(y_, -1.0, 1.0)
-
-
-    if v_ > 0
-        x_ = veh.state.posG.x + veh.state.v*Δt + action.a_lon*Δt^2/2# + delta_x
-    else
-        x_ = veh.state.posG.x + veh.state.v*Δt# + delta_x
-    end
+    delta_x = sqrt(s_new^2 - delta_y^2 )
+    delta_x = clamp(delta_x, 0., delta_x)
+    x_ = veh.state.posG.x + delta_x
 
     return VehicleState(VecSE2(x_, y_, veh.state.posG.θ), roadway, v_)
 end
+
 
 function AutomotiveDrivingModels.get_name(model::PedestrianAvoidancePOMDPFrenet)
     return "Pedestrian Avoidance System (POMDP)"
