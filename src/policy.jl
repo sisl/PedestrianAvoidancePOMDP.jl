@@ -1,6 +1,5 @@
 
 
-
 struct DecPolicy{P <: Policy, M <: Union{MDP, POMDP}, A} <: Policy
     policy::P # the single agent policy
     problem::M # the pomdp definition
@@ -8,11 +7,13 @@ struct DecPolicy{P <: Policy, M <: Union{MDP, POMDP}, A} <: Policy
     op # the reduction operator for utiliy fusion (e.g. sum or min)
  end
 
+
  function POMDPs.action(p::DecPolicy, b::Dict)
     vals = action_values(p, b)
     ai = findmax(vals)
     return p.action_map[ai[2]]
  end
+
 
 function action_values(policy::DecPolicy, dec_belief::Dict) 
     return reduce(policy.op, action_values(policy.policy, b) for (_,b) in dec_belief)
@@ -32,7 +33,6 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
 
     end
     return max_values
-
  end
  
  # perform dot product between an alpha vector and a sparse cat object
@@ -41,7 +41,6 @@ function action_values(policy::DecPolicy, dec_belief::Dict)
     for (s, p) in weighted_iterator(b)
         si = stateindex(problem, s)
         val += alpha[si]*p
-        #println(alpha[si], "si: ", si)
     end
     return val
  end

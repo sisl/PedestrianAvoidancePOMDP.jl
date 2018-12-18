@@ -1,6 +1,7 @@
 __precompile__()
 module PedestrianAvoidancePOMDP
 
+using Random
 using AutomotiveDrivingModels
 using AutoViz
 using AutomotiveSensors
@@ -23,14 +24,17 @@ include("transition.jl")
 include("observation.jl")
 include("belief.jl")
 include("policy.jl")
-include("frenet_pedestrian_pomdp.jl")
+include("pedestrian_pomdp.jl")
 include("helpers.jl")
 include("rendering.jl")
-include("pedestrian_avoidance.jl")
+include("pedestrian_pomdp_emergency_system.jl")
+include("evaluation_scenario.jl")
 
 
 export 
-    FrenetPedestrianPOMDP,
+    PedestrianAvoidancePOMDPFrenet,
+    PedestrianAvoidanceSystem,
+
     SingleOCFPOMDP,
     SingleOCFUpdater,
     SingleOCFBelief,
@@ -38,8 +42,8 @@ export
     SingleOCFState,
     CrosswalkEnv,
     ObservationCallback,
-    ObservationPedestrianAvoidanceCallback,
     animate_record,
-    PedestrianSystem
+    generate_scenario,
+    evaluateScenarioMetric
 
 end

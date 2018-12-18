@@ -156,7 +156,6 @@ function initBeliefAbsentPedestrianBorder(pomdp::SingleOCFPOMDP, ego_y::Float64,
     sizehint!(probs, 500);
     (ego_y_state_space,ego_v_state_space) = getEgoDataInStateSpace(pomdp, ego_y, ego_v)
 
-    # 
     s_min = pomdp.S_MIN
     if ( pomdp.env.params.obstacles_visible )
         for i = 1:length(pomdp.env.params.obstacles)

@@ -1,5 +1,29 @@
 
-function get_observations_state_space(model::FrenetPedestrianPOMDP, ego::Vehicle, sensor_observations::Vector{Vehicle} )
+"""
+is_crash(scene::Scene)
+return true if the ego car is in collision in the given scene, do not check for collisions between
+other participants
+"""
+function is_crash(scene::Scene)
+ego = scene[findfirst(1, scene)]
+@assert ego.id == 1
+if ego.state.v ≈ 0
+    return false
+end
+for veh in scene
+    if veh.id != 1
+        if AutomotivePOMDPs.is_colliding(ego, veh)
+            #println(veh)
+            println("-----------------> Collision <----------------------")
+            return true
+        end
+    end
+end
+return false
+end
+
+
+function get_observations_state_space(model::PedestrianAvoidancePOMDPFrenet, ego::Vehicle, sensor_observations::Vector{Vehicle} )
 
     o = Dict{Int64, SingleOCFObs}()
     for object in sensor_observations
@@ -19,7 +43,7 @@ function get_observations_state_space(model::FrenetPedestrianPOMDP, ego::Vehicle
         
         if ( occluded == false && delta_s < model.pomdp.S_MAX && delta_s > model.pomdp.S_MIN && delta_t < model.pomdp.T_MAX  &&  delta_t > model.pomdp.T_MIN )
             o[object.id] = SingleOCFState(ego.state.posF.t, ego.state.v, delta_s, delta_t, delta_theta, object.state.v)
-            println(o[object.id])    
+            #println(o[object.id])    
         end
 
        # println("PED: t: ", object_posF.t, " / ego: t: ", ego.state.posF.t, " s: ", ego.state.posF.s)
