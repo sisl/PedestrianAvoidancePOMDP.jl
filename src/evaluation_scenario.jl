@@ -3,7 +3,7 @@
 function generate_scenario(scenario, ego_v, hit_point)
     
     ego_y = 0.0
-    ped_x = 50.0
+    ped_x = 100.0
     ped_y = 0.0
     
     if scenario == "CPCN"
@@ -29,7 +29,11 @@ function generate_scenario(scenario, ego_v, hit_point)
         scenario_id = 4
         ped_v = 8 / 3.6
         obstacles = [] 
-         
+
+    elseif scenario == "FP"
+        scenario_id = 9
+        ped_v = 5 /3.6
+        obstacles = []  
     else
         scenario_id = -1
         ped_v = 5 / 3.6
@@ -85,8 +89,8 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
     ped_initial_state = VehicleState(VecSE2(ped_x, ped_y, ped_theta), env.crosswalk, env.roadway, ped_v)
     ped = Vehicle(ped_initial_state, AutomotivePOMDPs.PEDESTRIAN_DEF, ped_id)
 
-    ped2 = Vehicle(VehicleState(VecSE2(40., 5., -1.57), env.crosswalk, env.roadway, 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped2_id)
-    ped3 = Vehicle(VehicleState(VecSE2(53., 5., -1.57), env.crosswalk, env.roadway, 1.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped3_id)
+    ped2 = Vehicle(VehicleState(VecSE2(90., 5., -1.57), env.crosswalk, env.roadway, 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped2_id)
+    ped3 = Vehicle(VehicleState(VecSE2(103., 5., -1.57), env.crosswalk, env.roadway, 1.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped3_id)
 
     scene = Scene()
     push!(scene, ego)
@@ -141,7 +145,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
             sensor=sensor, 
             obstacles=env.obstacles,
             timestep=timestep, 
-            SAFETY_DISTANCE_LON=1.0,
+            SAFETY_DISTANCE_LON=1.5,
             AX_MAX=AX_MAX,
             THRESHOLD_COLLISION_RATE=0.5,
             THRESHOLD_TIME_TO_REACT=0.99
@@ -190,7 +194,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
 end
 
-function evaluateScenarioMetric(ego_vehicle, emergency_brake_request, ego_a, collision_vector)
+function evaluateScenarioMetric(ego_vehicle, emergency_brake_request, ego_a, collision_vector, ped_x)
 
     emergency_brake_intervention = false
     collision = false
@@ -201,7 +205,9 @@ function evaluateScenarioMetric(ego_vehicle, emergency_brake_request, ego_a, col
     a_jerk = 0.
     a_last = 0.
     for i=1:length(ego_vehicle)
-        if (ego_vehicle[i].state.v > 0)
+        # do not consider acceleration part, only until the pedestrian is reached
+        if (ego_vehicle[i].state.v > 0 && ego_vehicle[i].state.posG.x < ped_x - 3 )
+        #if (ego_vehicle[i].state.v > 0)
             push!(v,ego_vehicle[i].state.v)
         end
         
@@ -228,10 +234,46 @@ function evaluateScenarioMetric(ego_vehicle, emergency_brake_request, ego_a, col
         a_min = 0.
     end
     
-    if (collision_vector[end] == true)
+    if (collision_vector[end] == true && ego_vehicle[end].state.posG.x < ped_x - 2.)   # ignore collisions when the pedestrian runs into the side of the car (ego vehicle too slow)
         collision = true
         dv_collision = ego_vehicle[end].state.v
     end
     
     return (collision, emergency_brake_intervention, dv_collision, v_mean, a_mean, a_jerk, a_min)
+end
+
+function evaluateScenariosMetric(results)
+    
+    sum_collisions = 0
+    sum_eb = 0
+
+    dv = []
+    v_mean = []
+    a_mean = []
+    a_jerk = []
+    a_min = []
+
+    for i=1:length(results)
+        #println(results[i])
+        if ( results[i][4] == 1.0 )
+            sum_collisions += 1
+        end
+        if ( results[i][5] == 1.0 )
+            sum_eb += 1
+        end
+
+        push!(dv,results[i][6])
+        push!(v_mean,results[i][7])
+        push!(a_mean,results[i][8])
+        push!(a_jerk,results[i][9])
+        push!(a_min,results[i][10])
+
+    end
+    dv = mean(dv)
+    v_mean = mean(v_mean)
+    a_mean = mean(a_mean)
+    a_jerk = mean(a_jerk)
+    a_min = mean(a_min)
+
+    return (sum_collisions, sum_eb, dv, v_mean, a_mean, a_jerk, a_min)
 end

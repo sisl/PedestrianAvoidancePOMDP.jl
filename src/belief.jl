@@ -182,8 +182,8 @@ function initBeliefAbsentPedestrianBorder(pomdp::SingleOCFPOMDP, ego_y::Float64,
     push!(states, absent_state)
 
     probs = ones(length(states))
-    probs[1:end - 1] .= pomdp.pedestrian_birth / length(states)
-    probs[end] = 1.0 - pomdp.pedestrian_birth
+    probs[1:end - 1] .= pomdp.PROBABILITY_PEDESTRIAN_BIRTH / length(states)
+    probs[end] = 1.0 - pomdp.PROBABILITY_PEDESTRIAN_BIRTH
 
     return SingleOCFBelief(states,probs)
 
@@ -226,8 +226,8 @@ function initBeliefAbsentPedestrian(pomdp::SingleOCFPOMDP, ego_y::Float64, ego_v
     push!(states,absent_state)
 
     probs = ones(length(states))
-    probs[1:end - 1] .= pomdp.pedestrian_birth / length(states)
-    probs[end] = 1.0 - pomdp.pedestrian_birth
+    probs[1:end - 1] .= pomdp.PROBABILITY_PEDESTRIAN_BIRTH / length(states)
+    probs[end] = 1.0 - pomdp.PROBABILITY_PEDESTRIAN_BIRTH
   
     return SingleOCFBelief(states,probs)
 end

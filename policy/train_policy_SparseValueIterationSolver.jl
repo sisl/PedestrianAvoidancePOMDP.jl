@@ -47,9 +47,7 @@ mdp = UnderlyingMDP(pomdp);
 
 vi_policy = solve(solver, mdp)
 
-qmdp_policy = AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
+policy = AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
 
 # save policy!
-FileIO.save(policy_name, "policy", qmdp_policy)
-
-
+FileIO.save(policy_name, "policy", policy)

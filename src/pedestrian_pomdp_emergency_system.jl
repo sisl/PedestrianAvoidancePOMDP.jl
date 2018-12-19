@@ -36,7 +36,7 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
 
     ego = scene[findfirst(egoid, scene)]
     model.ego_vehicle = ego
-
+    
     #println("model.t_current: ", model.t_current)
 
     ################ Emergency Braking System #############################################
