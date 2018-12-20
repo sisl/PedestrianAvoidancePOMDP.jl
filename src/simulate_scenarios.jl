@@ -76,17 +76,11 @@ pomdp.ACTION_LAT_COST = parsed_args["actionlatcost"]
 pomdp.KEEP_VELOCITY_REWARD = parsed_args["keepvelocityreward"]
 pomdp.KEEP_LANE_REWARD = parsed_args["keeplanereward"]
 pomdp.PROBABILITY_PEDESTRIAN_BIRTH = parsed_args["pedestrianbirthprobability"]
+pomdp.γ = 0.99
 
 println("algorithm: ", algorithm)
 
-
-#algorithm = "EmergencyBrakingSystem"
-#algorithm = "PedestrianAvoidancePOMDP"
-#algorithm = "PedestrianAvoidancePOMDP_EmergencyBrakingSystem"
-
-
-
-parameters_pomdp = string(pomdp.COLLISION_COST, "_", pomdp.PROBABILITY_PEDESTRIAN_BIRTH, "_", pomdp.ACTION_LON_COST, "_", pomdp.ACTION_LAT_COST, "_", pomdp.KEEP_VELOCITY_REWARD, "_", pomdp.KEEP_LANE_REWARD, "_")
+parameters_pomdp = string(pomdp.COLLISION_COST, "_", pomdp.PROBABILITY_PEDESTRIAN_BIRTH, "_", pomdp.ACTION_LON_COST, "_", pomdp.ACTION_LAT_COST, "_", pomdp.KEEP_VELOCITY_REWARD, "_", pomdp.KEEP_LANE_REWARD, "_", pomdp.γ, "_")
 policy_name = string(parsed_args["policy_name"], "_", parameters_pomdp, ".jld2")
 log_filename = string("results_", algorithm, "_", policy_name, ".csv")
 
@@ -141,9 +135,9 @@ for scenario in scenarios
             if algorithm == "EmergencyBrakingSystem"
                 (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = EmergencyBrakingSystem.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles)
             elseif algorithm == "PedestrianAvoidancePOMDP"
-                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm)
+                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
             elseif algorithm == "PedestrianAvoidancePOMDP_EmergencyBrakingSystem"
-                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm)
+                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
             else
                 println("No valid algorithm defined!")
                 return false
