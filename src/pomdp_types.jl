@@ -97,6 +97,7 @@ const PEDESTRIAN_OFF_KEY = -1
     ACTION_LON_COST::Float64 = -1.0
     ACTION_LAT_COST::Float64 = -1.0
     KEEP_VELOCITY_REWARD::Float64 = 5.0
+    KEEP_LANE_REWARD::Float64 = 5.0
 
     γ::Float64 = 0.95
 
@@ -124,7 +125,9 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r += pomdp.KEEP_VELOCITY_REWARD
     end
    
-
+    if ( abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2 )
+        r += pomdp.KEEP_LANE_REWARD
+    end
 #=
     # do not leave lane
     if (action.lateral_movement >= 0.1 && sp.ego_y >= pomdp.EGO_Y_MAX )
