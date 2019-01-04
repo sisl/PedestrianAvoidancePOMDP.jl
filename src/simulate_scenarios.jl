@@ -33,19 +33,15 @@ using ArgParse
 s = ArgParseSettings()
 
 @add_arg_table s begin
-    "--policy_name"
-        arg_type = String
-        default = "policy"
-        help = "Name of the policy"
-    "--policy_type"
-        arg_type = String
-        default = "no"
-        help = "choose among 'no', 'longitudinal_support', 'longitudinal_lateral_support'"
+
     "--algorithm"
         arg_type = String
         default = "EmergencyBrakingSystem"
         help = "choose among 'EmergencyBrakingSystem', 'PedestrianAvoidancePOMDP', 'PedestrianAvoidancePOMDP_EmergencyBrakingSystem'"
-    
+    "--policy_name"
+        arg_type = String
+        default = "no"
+        help = "name for the policy"
     "--collisioncost"
         arg_type = Float64
         default = -500.0
@@ -78,6 +74,7 @@ pomdp.COLLISION_COST = parsed_args["collisioncost"]
 pomdp.ACTION_LON_COST = parsed_args["actionloncost"]
 pomdp.ACTION_LAT_COST = parsed_args["actionlatcost"]
 pomdp.KEEP_VELOCITY_REWARD = parsed_args["keepvelocityreward"]
+pomdp.KEEP_LANE_REWARD = parsed_args["keeplanereward"]
 pomdp.PROBABILITY_PEDESTRIAN_BIRTH = parsed_args["pedestrianbirthprobability"]
 
 println("algorithm: ", algorithm)
@@ -89,9 +86,8 @@ println("algorithm: ", algorithm)
 
 
 
-parameters_pomdp = string(pomdp.COLLISION_COST, "_", pomdp.PROBABILITY_PEDESTRIAN_BIRTH, "_", pomdp.ACTION_LON_COST, "_", pomdp.ACTION_LAT_COST)
+parameters_pomdp = string(pomdp.COLLISION_COST, "_", pomdp.PROBABILITY_PEDESTRIAN_BIRTH, "_", pomdp.ACTION_LON_COST, "_", pomdp.ACTION_LAT_COST, "_", pomdp.KEEP_VELOCITY_REWARD, "_", pomdp.KEEP_LANE_REWARD, "_")
 policy_name = string(parsed_args["policy_name"], "_", parameters_pomdp, ".jld2")
-policy_type = parsed_args["policy_type"]
 log_filename = string("results_", algorithm, "_", policy_name, ".csv")
 
 
@@ -99,12 +95,13 @@ log_filename = string("results_", algorithm, "_", policy_name, ".csv")
 if algorithm != "EmergencyBrakingSystem"
 
     println("Policy name: ", policy_name)
-    println("Policy type: ", policy_type)
 
     println("pomdp.COLLISION_COST: ", pomdp.COLLISION_COST)
     println("pomdp.ACTION_LON_COST: ", pomdp.ACTION_LON_COST)
     println("pomdp.ACTION_LAT_COST: ", pomdp.ACTION_LAT_COST)
     println("pomdp.KEEP_VELOCITY_REWARD: ", pomdp.KEEP_VELOCITY_REWARD)
+    println("pomdp.KEEP_LANE_REWARD: ", pomdp.KEEP_LANE_REWARD)
+
     println("pomdp.PROBABILITY_PEDESTRIAN_BIRTH: ", pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
 
     solver = SparseValueIterationSolver(max_iterations=200, belres=1e-4, include_Q=true, verbose=true)
