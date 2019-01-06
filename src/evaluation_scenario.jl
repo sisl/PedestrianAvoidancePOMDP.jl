@@ -58,7 +58,7 @@ function generate_scenario(scenario, ego_v, hit_point)
 end
 
 
-function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system)
+function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system, probability_pedestrian_birth)
 
     timestep = 0.05
     timestep_pomdp = 0.2
@@ -95,8 +95,8 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
     scene = Scene()
     push!(scene, ego)
     push!(scene, ped)
-    push!(scene, ped2)
-    push!(scene, ped3)
+    #push!(scene, ped2)
+    #push!(scene, ped3)
 
     pos_noise = 0.0
     vel_noise = 0.0
@@ -111,7 +111,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
     pomdp.env = env
     pomdp.desired_velocity = ego_v
     pomdp.ΔT = timestep_pomdp
-
+    pomdp.PROBABILITY_PEDESTRIAN_BIRTH = probability_pedestrian_birth
     updater = SingleOCFUpdater(pomdp)
 
     # define a model for each entities present in the scene
@@ -161,8 +161,8 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
     end
     models[ped_id] = ConstantPedestrian(v_desired=ped_v, dawdling_amp=0.0) # dumb model
-    models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
-    models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
+   # models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
+   # models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
 
     nticks = 160
     rec = SceneRecord(nticks+1, timestep)
