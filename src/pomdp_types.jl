@@ -121,10 +121,14 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
   #      r -= pomdp.KEEP_VELOCITY_REWARD
   #  end
     
-    if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
-        r += pomdp.KEEP_VELOCITY_REWARD
-    end
+  #  if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
+  #      r += pomdp.KEEP_VELOCITY_REWARD
+  #  end
    
+    delta_v = abs(sp.ego_v - pomdp.desired_velocity)
+    r -= (delta_v * 0.1)
+
+
     if ( length(pomdp.lateral_actions) > 1 && (abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2) )
         r += pomdp.KEEP_LANE_REWARD
     end
@@ -195,10 +199,6 @@ function POMDPs.isterminal(pomdp::SingleOCFPOMDP, s::SingleOCFState)
     if collision_checker(pomdp,s)
         return true
     end
-    
-    if s.ped_s == 0
-        return true
-    end 
     
     return false
 end
