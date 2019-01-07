@@ -76,7 +76,7 @@ pomdp.ACTION_LAT_COST = parsed_args["actionlatcost"]
 pomdp.KEEP_VELOCITY_REWARD = parsed_args["keepvelocityreward"]
 pomdp.KEEP_LANE_REWARD = parsed_args["keeplanereward"]
 pomdp.PROBABILITY_PEDESTRIAN_BIRTH = parsed_args["pedestrianbirthprobability"]
-pomdp.γ = 0.99
+pomdp.γ = 0.95
 
 println("algorithm: ", algorithm)
 
