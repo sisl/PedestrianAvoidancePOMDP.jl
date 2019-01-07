@@ -57,7 +57,7 @@ const PEDESTRIAN_OFF_KEY = -1
 
     EGO_V_MIN::Float64 = 0.
     EGO_V_MAX::Float64 = 14.
-    EGO_V_RANGE::Vector{Float64} = LinRange(EGO_V_MIN, EGO_V_MAX, 15)
+    EGO_V_RANGE::Vector{Float64} = LinRange(EGO_V_MIN, EGO_V_MAX, 29)
 
     S_MIN::Float64 = -2.
     S_MAX::Float64 = 50.
@@ -117,15 +117,15 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     end
     
     # keep velocity
-    if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
-        r -= pomdp.KEEP_VELOCITY_REWARD
-    end
+  #  if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
+  #      r -= pomdp.KEEP_VELOCITY_REWARD
+  #  end
     
     if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
         r += pomdp.KEEP_VELOCITY_REWARD
     end
    
-    if ( abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2 )
+    if ( length(pomdp.lateral_actions) > 1 && (abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2) )
         r += pomdp.KEEP_LANE_REWARD
     end
 #=
@@ -163,7 +163,7 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
 
     # costs for longitudinal actions
     if action.acc > 0. ||  action.acc < 0.0
-        r += pomdp.ACTION_LON_COST * abs(action.acc)*2
+        r += pomdp.ACTION_LON_COST * abs(action.acc)
     end
  
     # costs for lateral actions

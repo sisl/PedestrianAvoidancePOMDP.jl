@@ -61,7 +61,7 @@ end
 function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system, probability_pedestrian_birth)
 
     timestep = 0.05
-    timestep_pomdp = 0.2
+    timestep_pomdp = 0.05
     AX_MAX = -10.
 
     params = CrosswalkParams()    
@@ -123,7 +123,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
         sensor=sensor,
         obstacles=env.obstacles,
         timestep=timestep_pomdp,
-        update_tick_high_level_planner = timestep_pomdp / timestep,
+        update_tick_high_level_planner = 1,
         pomdp=pomdp,
         policy=policy,
         updater=updater,
