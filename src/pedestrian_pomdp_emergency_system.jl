@@ -67,7 +67,7 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
     end
     
     # stronger decceleration is used
-    if ( model.emergency_braking_system.a.a_lon < 0) 
+    if ( (model.emergency_braking_system.a.a_lon < 0 && ego.state.v > 10 / 3.6) || ( model.emergency_braking_system.a.a_lon < -4. ) ) 
        # a_lon = min(model.pedestrian_pomdp_frenet.a.a_lon, model.emergency_braking_system.a.a_lon)
         a_lon = model.emergency_braking_system.a.a_lon
     else

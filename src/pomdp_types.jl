@@ -88,7 +88,7 @@ const PEDESTRIAN_OFF_KEY = -1
 
     ego_vehicle::Vehicle = Vehicle(VehicleState(VecSE2(0.0, 0.0, 0.0), 0.0), VehicleDef(), 1)
 
-    desired_velocity::Float64 = 50.0 / 3.6
+    desired_velocity::Float64 = 14. #50.0 / 3.6
 
 
     PROBABILITY_PEDESTRIAN_BIRTH::Float64 = 0.6
