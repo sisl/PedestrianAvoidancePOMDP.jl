@@ -17,6 +17,7 @@ Pkg.add(PackageSpec(url="https://github.com/JuliaPOMDP/RLInterface.jl"))
 Pkg.add(PackageSpec(url="https://github.com/sisl/AutomotivePOMDPs"))
 Pkg.add(PackageSpec(url="https://github.com/sisl/GridInterpolations.jl"))
 Pkg.add(PackageSpec(url="https://github.com/JuliaPOMDP/POMDPModelTools.jl"))
+Pkg.add(PackageSpec(url="https://github.com/sisl/EmergencyBrakingSystem.jl"))
 
 Pkg.add("POMDPPolicies")
 Pkg.add("POMDPs")
