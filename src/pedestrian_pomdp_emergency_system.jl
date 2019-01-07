@@ -53,7 +53,7 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidanceSystem, scen
         observe!(model.pedestrian_pomdp_frenet, scene, roadway, egoid)
         act = action(model.pedestrian_pomdp_frenet.policy_dec, model.pedestrian_pomdp_frenet.b_dict)
         model.pedestrian_pomdp_frenet.a = LatLonAccel(act.lateral_movement, act.acc)
-       # println("Action high-level-planner: ", model.pedestrian_pomdp_frenet.a)
+        # println("Action high-level-planner: ", model.pedestrian_pomdp_frenet.a)
         model.b_dict = model.pedestrian_pomdp_frenet.b_dict
     end
     
