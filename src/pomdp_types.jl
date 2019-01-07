@@ -46,7 +46,7 @@ const PEDESTRIAN_OFF_KEY = -1
     ego_type::VehicleDef = VehicleDef()
     ped_type::VehicleDef = VehicleDef(AgentClass.PEDESTRIAN, 1.0 + 2.0*PED_SAFETY_DISTANCE, 1. + 2.0*PED_SAFETY_DISTANCE)
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
-    lateral_actions::Vector{Float64} = [0] #[1.0, 0.0, -1.0]
+    lateral_actions::Vector{Float64} = [0.] #[1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
     PED_A_RANGE::Vector{Float64} = LinRange(-1.0, 1.0, 3)
     PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
@@ -75,12 +75,6 @@ const PEDESTRIAN_OFF_KEY = -1
     PED_THETA_MAX::Float64 = 1.57+1.57/2
     PED_THETA_RANGE::Vector{Float64} = [1.57]# LinRange(PED_THETA_MIN, PED_THETA_MAX, 7)
 
-
-    collision_cost::Float64 = -200.0
-    action_cost_lon::Float64 = -1.0
-    action_cost_lat::Float64 = -1.0
-    goal_reward::Float64 = 0.0
-    γ::Float64 = 0.95
     
     state_space_grid::GridInterpolations.RectangleGrid = initStateSpace(EGO_Y_RANGE, EGO_V_RANGE, S_RANGE, T_RANGE, PED_THETA_RANGE, PED_V_RANGE)
     state_space::Vector{SingleOCFState} = getStateSpaceVector(state_space_grid)
@@ -96,7 +90,17 @@ const PEDESTRIAN_OFF_KEY = -1
 
     desired_velocity::Float64 = 50.0 / 3.6
 
-    pedestrian_birth::Float64 = 0.6
+
+    PROBABILITY_PEDESTRIAN_BIRTH::Float64 = 0.6
+
+    COLLISION_COST::Float64 = -500.0
+    ACTION_LON_COST::Float64 = -1.0
+    ACTION_LAT_COST::Float64 = -1.0
+    KEEP_VELOCITY_REWARD::Float64 = 5.0
+    KEEP_LANE_REWARD::Float64 = 5.0
+
+    γ::Float64 = 0.95
+
 end
 
 
@@ -108,27 +112,22 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
 
     # is there a collision?
     if collision_checker(pomdp,sp)
-        r += pomdp.collision_cost
-    #    else  # no collision
-        # is the goal reached?
-      #  if sp.ped_s <= 0
-      #      r += pomdp.goal_reward
-      #  end 
+        r += pomdp.COLLISION_COST
         return r
     end
     
-
-    
     # keep velocity
     if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
-        r += (-10)
+        r -= pomdp.KEEP_VELOCITY_REWARD
     end
     
     if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
-        r += 5
+        r += pomdp.KEEP_VELOCITY_REWARD
     end
    
-
+    if ( abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2 )
+        r += pomdp.KEEP_LANE_REWARD
+    end
 #=
     # do not leave lane
     if (action.lateral_movement >= 0.1 && sp.ego_y >= pomdp.EGO_Y_MAX )
@@ -158,17 +157,20 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
    #     r += 20
   #  end
 
-#=
+ # if abs(action.lateral_movement) > 0 && abs(s.ped_v) > 0.5
+ #   r -= 50
+ # end 
+
     # costs for longitudinal actions
     if action.acc > 0. ||  action.acc < 0.0
-        r += pomdp.action_cost_lon * abs(action.acc)*2
+        r += pomdp.ACTION_LON_COST * abs(action.acc)*2
     end
  
     # costs for lateral actions
     if abs(action.lateral_movement) > 0 
-        r += pomdp.action_cost_lat * abs(action.lateral_movement) 
+        r += pomdp.ACTION_LAT_COST * abs(action.lateral_movement) 
     end
-=#
+
 
 #=
     if abs(action.acc) > 0 && abs(action.lateral_movement) > 0

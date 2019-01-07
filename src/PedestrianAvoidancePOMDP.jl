@@ -44,6 +44,7 @@ export
     ObservationCallback,
     animate_record,
     generate_scenario,
-    evaluateScenarioMetric
+    evaluateScenarioMetric,
+    evaluateScenariosMetric
 
 end

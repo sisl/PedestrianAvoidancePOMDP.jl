@@ -43,10 +43,10 @@ function AutomotivePOMDPs.animate_record(rec::SceneRecord,dt::Float64, env::Cros
         sensor_overlay = GaussianSensorOverlay(sensor=sensor, o=sensor_o[frame_index])
         occlusion_overlay = OcclusionOverlay(obstacles=env.obstacles)
 
-        text_overlay = TextOverlay(text=text_to_visualize,pos=VecE2(20.,10.),incameraframe=true,color=colorant"white",font_size=20)
+        text_overlay = TextOverlay(text=text_to_visualize,pos=VecE2(70.,10.),incameraframe=true,color=colorant"white",font_size=20)
         belief_overlay = BeliefOverlay(b_dict=belief_dict[frame_index], ego_vehicle=ego_vehicle[frame_index])
       #  max_speed = 14.0
-      #  histogram_overlay = HistogramOverlay(pos = VecE2(15.0, 10.0), val=ego_vehicle[frame_index].state.v/max_speed, label="v speed")
+      #  histogram_overlay = HistogramOverlay(pos = VecE2(65.0, 10.0), val=ego_vehicle[frame_index].state.v/max_speed, label="v speed")
 
         if length(prediction) > 0 
             prediction_overlay = EmergencyBrakingSystem.PretictionOverlay(prediction=prediction[frame_index])

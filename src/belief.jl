@@ -16,8 +16,8 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, bold::Dict{I
            bnew[oid] = update(pomdp, up, bold[oid], a, o[oid])
 
         elseif oid == PEDESTRIAN_OFF_KEY  # absent state
-            bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(pomdp, o[oid].ego_y, o[oid].ego_v) 
-           # bnew[PEDESTRIAN_OFF_KEY] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
+           # bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(pomdp, o[oid].ego_y, o[oid].ego_v) 
+            bnew[PEDESTRIAN_OFF_KEY] = update(pomdp, up, bold[PEDESTRIAN_OFF_KEY], a, o[oid])
            # bnew[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrianBorder(pomdp, o[oid].ego_y, o[oid].ego_v) 
            b_states = []
            b_prob = []
@@ -182,8 +182,8 @@ function initBeliefAbsentPedestrianBorder(pomdp::SingleOCFPOMDP, ego_y::Float64,
     push!(states, absent_state)
 
     probs = ones(length(states))
-    probs[1:end - 1] .= pomdp.pedestrian_birth / length(states)
-    probs[end] = 1.0 - pomdp.pedestrian_birth
+    probs[1:end - 1] .= pomdp.PROBABILITY_PEDESTRIAN_BIRTH / length(states)
+    probs[end] = 1.0 - pomdp.PROBABILITY_PEDESTRIAN_BIRTH
 
     return SingleOCFBelief(states,probs)
 
@@ -226,8 +226,8 @@ function initBeliefAbsentPedestrian(pomdp::SingleOCFPOMDP, ego_y::Float64, ego_v
     push!(states,absent_state)
 
     probs = ones(length(states))
-    probs[1:end - 1] .= pomdp.pedestrian_birth / length(states)
-    probs[end] = 1.0 - pomdp.pedestrian_birth
+    probs[1:end - 1] .= pomdp.PROBABILITY_PEDESTRIAN_BIRTH / length(states)
+    probs[end] = 1.0 - pomdp.PROBABILITY_PEDESTRIAN_BIRTH
   
     return SingleOCFBelief(states,probs)
 end

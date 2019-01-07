@@ -175,3 +175,31 @@ function calulateHiddenPositionsLeftSide(pomdp::SingleOCFPOMDP, obst_s::Float64,
 
     return sT_pos
 end
+
+function objects_time_delay(model::PedestrianAvoidancePOMDPFrenet)
+    
+    objects_tracked = Vehicle[]
+
+    for object in model.sensor_observations
+
+	    if haskey(model.objects_tracked, object.id) == false   # new object
+            model.objects_tracked[object.id] = model.t_current + 0.2
+            #println(model.objects_tracked)
+        else
+	        if ( model.t_current >= model.objects_tracked[object.id] )   # how long is the object already visible
+                model.objects_tracked[object.id] = model.t_current
+                push!(objects_tracked, object)
+            end
+        end
+    end
+
+    # delete objects if they are older than 0.2s, because if object occurs again, the tracker needs again some time
+    for oid in keys(model.objects_tracked)
+        if ( model.objects_tracked[oid] < model.t_current - 0.2 )
+            delete!(model.objects_tracked, oid)
+        end
+    end
+
+    model.sensor_observations = deepcopy(objects_tracked)
+    return model.sensor_observations
+end

@@ -12,6 +12,7 @@
 
     obstacles::Vector{ConvexPolygon} = []
     sensor_observations::Vector{Vehicle} = []
+    objects_tracked = Dict{Int64, Float64}()
 
     update_tick_high_level_planner::Int64 = 1
 
@@ -47,6 +48,9 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
     model.pomdp.ego_vehicle = ego
     model.ego_vehicle = ego
     model.sensor_observations = measure(PerfectSensor(), ego, scene, roadway, model.obstacles)
+
+    # add sensor delay 0.2s
+    model.sensor_observations = objects_time_delay(model)
 
 #    # get observations from sensor, only visible objects with sensor noise
 #    model.sensor_observations = measure(model.sensor, ego, scene, roadway, model.obstacles)
