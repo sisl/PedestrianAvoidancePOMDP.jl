@@ -74,30 +74,35 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
         model.b_dict = deepcopy(b_new)
         #println("dict: ", model.b_dict)
             
+b_dict_tmp = Dict{Int64, SingleOCFBelief}()
+for oid in keys(model.b_dict)
+    if ( oid == PEDESTRIAN_OFF_KEY )
+        b_states = []
+        b_prob = []
+        for (s, prob) in weighted_iterator(model.b_dict[PEDESTRIAN_OFF_KEY] )
+            if ( is_state_absent(model.pomdp, s) )
+                (ego_y_state_space, ego_v_state_space) = getEgoDataInStateSpace(model.pomdp, ego.state.posF.t, ego.state.v)
+                s = SingleOCFState(ego_y_state_space, ego_v_state_space, model.pomdp.S_MAX, model.pomdp.T_MAX, 0.0 ,0.0)
+            end
+            push!(b_states, s)
+            push!(b_prob, prob)
+        end
+        normalize!(b_prob, 1)
+        b_dict_tmp[PEDESTRIAN_OFF_KEY] =  SingleOCFBelief(b_states, b_prob)  
+    else
+        b_dict_tmp[oid] = model.b_dict[oid]
+    end
+end
+#println(b_dict_tmp)
+act = action(model.policy_dec, b_dict_tmp)
+
         # use policy and belief dictionary to calculate next action
         act = action(model.policy_dec, model.b_dict)
         model.a = LatLonAccel(act.lateral_movement, act.acc)
         #println("action combined: ", model.a)
 
 
-#=
-        # dummy implementation for one belief
-        if ( haskey(model.b_dict, 2) )
-
-            model.b = model.b_dict[2]
-            
-            println("-> perfect observation: ", observations[2])
-            obs_state_space = model.pomdp.state_space[stateindex(model.pomdp,observations[2])]
-            println("-> perfect observation state space: ", obs_state_space) 
-            model.b = SingleOCFBelief([obs_state_space], [1.0])  
-
-            act = action(model.policy, model.b) # policy
-            model.a = LatLonAccel(act.lateral_movement, act.acc)
-            println("action (ped1): ", model.a ) 
-        end
-=#
-  
-        
+   
         # dummy functionality to test transition function / belief update
         #=
         if (model.tick > 2 )

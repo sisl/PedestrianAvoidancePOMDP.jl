@@ -58,6 +58,10 @@ s = ArgParseSettings()
         arg_type = Float64
         default = 5.0
         help = "reward function - reward for keeping the velocity: 5.0"
+    "--keeplanereward"
+        arg_type = Float64
+        default = 5.0
+        help = "reward function - reward for keeping the lane center: 5.0"        
     "--pedestrianbirthprobability"
         arg_type = Float64
         default = 0.6

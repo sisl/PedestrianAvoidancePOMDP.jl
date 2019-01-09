@@ -117,14 +117,14 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     end
     
     # keep velocity
-  #  if ( action.acc > 0. && (sp.ego_v > pomdp.desired_velocity || s.ego_v > pomdp.desired_velocity) )
-  #      r -= pomdp.KEEP_VELOCITY_REWARD
-  #  end
-    
-    if ( abs(sp.ego_v - pomdp.desired_velocity) < 1 )
-        r += pomdp.KEEP_VELOCITY_REWARD
+    if (sp.ego_v <= pomdp.desired_velocity )
+        v_factor = (pomdp.desired_velocity-abs(sp.ego_v - pomdp.desired_velocity)) / pomdp.desired_velocity 
+        r += (v_factor * pomdp.KEEP_VELOCITY_REWARD)
+    else
+        r -= pomdp.KEEP_VELOCITY_REWARD
     end
-   
+
+
     if ( length(pomdp.lateral_actions) > 1 && (abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2) )
         r += pomdp.KEEP_LANE_REWARD
     end
@@ -144,22 +144,8 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
     r += r_lane
 
  =#
-    # keep velocity
-   # r_vel = (1) * ( -abs(pomdp.desired_velocity-sp.ego_v))
-  #  if ( sp.ego_v > pomdp.desired_velocity)
-  #      r_vel = 0.
-  #  end
 
-  #  r += r_vel
 
-    
-  #  if ( abs(pomdp.desired_velocity-sp.ego_v) < 1. )
-   #     r += 20
-  #  end
-
- # if abs(action.lateral_movement) > 0 && abs(s.ped_v) > 0.5
- #   r -= 50
- # end 
 
     # costs for longitudinal actions
     if action.acc > 0. ||  action.acc < 0.0
@@ -177,10 +163,6 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r += (-10)
     end
 =#
-  
-   # println("velocity: ", r_vel ) 
-   # println("lane: ", r_lane)
-
     return r
     
 end
@@ -195,10 +177,6 @@ function POMDPs.isterminal(pomdp::SingleOCFPOMDP, s::SingleOCFState)
     if collision_checker(pomdp,s)
         return true
     end
-    
-    if s.ped_s == 0
-        return true
-    end 
     
     return false
 end
@@ -254,7 +232,7 @@ function getStateSpacePedVector(ped_grid)
         push!(state_space_ped,SingleOCFPedState(s[1], s[2], s[3], s[4]))
     end
     # add absent state
-   # push!(state_space_ped,SingleOCFPedState(-10., -10., 0., 0.))
+    push!(state_space_ped,SingleOCFPedState(-10., -10., 0., 0.))
     return state_space_ped
 end
 

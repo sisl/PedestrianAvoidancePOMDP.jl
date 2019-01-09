@@ -10,8 +10,8 @@ function generate_scenario(scenario, ego_v, hit_point)
         scenario_id = 1
         ped_v = 5/3.6
         obstacles = [ConvexPolygon([VecE2(ped_x-VehicleDef().length-1, ped_y-2), 
-                VecE2(ped_x-VehicleDef().length-1, ped_y-2-VehicleDef().width), 
-                VecE2(ped_x-1, ped_y-2-VehicleDef().width), 
+                VecE2(ped_x-VehicleDef().length-1, ped_y-2-VehicleDef().width-2), 
+                VecE2(ped_x-1, ped_y-2-VehicleDef().width-2), 
                 VecE2(ped_x-1, ped_y-2)],4)]
         
     elseif scenario == "CPAN25"
@@ -60,8 +60,13 @@ end
 
 function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system, probability_pedestrian_birth)
 
+    t_simulation = 12
     timestep = 0.05
-    timestep_pomdp = 0.05
+    timestep_pomdp = 0.2
+
+    nticks = Int(t_simulation / timestep)
+
+
     AX_MAX = -10.
 
     params = CrosswalkParams()    
@@ -91,6 +96,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
     ped2 = Vehicle(VehicleState(VecSE2(90., 5., -1.57), env.crosswalk, env.roadway, 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped2_id)
     ped3 = Vehicle(VehicleState(VecSE2(103., 5., -1.57), env.crosswalk, env.roadway, 1.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped3_id)
+
 
     scene = Scene()
     push!(scene, ego)
@@ -132,10 +138,12 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
         b=PedestrianAvoidancePOMDP.initBeliefAbsentPedestrian(pomdp, ego_y, ego_v)
     )
 
+    timestep_simulation = timestep
     if (system == "PedestrianAvoidancePOMDP")
         println("PedestrianAvoidancePOMDP")
         models[ego_id] = pedestrian_pomdp_frenet
-
+        nticks = Int(t_simulation / timestep_pomdp)
+        timestep_simulation = timestep_pomdp
     else
         println("PedestrianAvoidancePOMDP_EmergencyBrakingSystem")
         # definition emergency braking system
@@ -156,17 +164,16 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
             pedestrian_pomdp_frenet=pedestrian_pomdp_frenet,
             emergency_braking_system=emergency_braking_system,
             timestep=timestep,
-            update_tick_high_level_planner=timestep_pomdp / timestep,
+            update_tick_high_level_planner=timestep_pomdp/timestep,
         )
+        timestep_simulation = timestep
 
     end
     models[ped_id] = ConstantPedestrian(v_desired=ped_v, dawdling_amp=0.0) # dumb model
    # models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
    # models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
 
-    nticks = 160
-    rec = SceneRecord(nticks+1, timestep)
-
+    rec = SceneRecord(nticks+1, timestep_simulation)
 
 
     # callback data definition
@@ -190,7 +197,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
     simulate!(rec, scene, env.roadway, models, nticks, obs_callback)
 
-    return (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle)
+    return (rec, timestep_simulation, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle)
 
 end
 
