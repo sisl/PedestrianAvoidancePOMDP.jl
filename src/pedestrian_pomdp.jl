@@ -73,7 +73,7 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
         b_new = update(model.pomdp, model.updater, model.b_dict, SingleOCFAction(model.a.a_lon, model.a.a_lat), observations)
         model.b_dict = deepcopy(b_new)
         #println("dict: ", model.b_dict)
- #=           
+            
 b_dict_tmp = Dict{Int64, SingleOCFBelief}()
 for oid in keys(model.b_dict)
     if ( oid == PEDESTRIAN_OFF_KEY )
@@ -95,7 +95,6 @@ for oid in keys(model.b_dict)
 end
 #println(b_dict_tmp)
 act = action(model.policy_dec, b_dict_tmp)
-=#
 
         # use policy and belief dictionary to calculate next action
         act = action(model.policy_dec, model.b_dict)
@@ -103,24 +102,7 @@ act = action(model.policy_dec, b_dict_tmp)
         #println("action combined: ", model.a)
 
 
-#=
-        # dummy implementation for one belief
-        if ( haskey(model.b_dict, 2) )
-
-            model.b = model.b_dict[2]
-            
-            println("-> perfect observation: ", observations[2])
-            obs_state_space = model.pomdp.state_space[stateindex(model.pomdp,observations[2])]
-            println("-> perfect observation state space: ", obs_state_space) 
-            model.b = SingleOCFBelief([obs_state_space], [1.0])  
-
-            act = action(model.policy, model.b) # policy
-            model.a = LatLonAccel(act.lateral_movement, act.acc)
-            println("action (ped1): ", model.a ) 
-        end
-=#
-  
-        
+   
         # dummy functionality to test transition function / belief update
         #=
         if (model.tick > 2 )
