@@ -56,14 +56,14 @@ end
 function get_state_absent(pomdp::SingleOCFPOMDP, ego_y::Float64, ego_v::Float64)
 
     (ego_y_state_space,ego_v_state_space) = getEgoDataInStateSpace(pomdp, ego_y, ego_v)
-    return SingleOCFState(ego_y_state_space, ego_v_state_space, -10.0, -10.0, 0.0 ,0.0)
+    return SingleOCFState(ego_y_state_space, ego_v_state_space, -10.0, -10.0, pomdp.PED_THETA_RANGE[1] ,0.0)
 
 end
 
 function get_state_absent(pomdp::SingleOCFPOMDP, s::SingleOCFState)
 
     (ego_y_state_space,ego_v_state_space) = getEgoDataInStateSpace(pomdp, s.ego_y, s.ego_v)
-    return SingleOCFState(ego_y_state_space, ego_v_state_space, -10.0, -10.0, 0.0 ,0.0)
+    return SingleOCFState(ego_y_state_space, ego_v_state_space, -10.0, -10.0, pomdp.PED_THETA_RANGE[1] ,0.0)
 
 end
 

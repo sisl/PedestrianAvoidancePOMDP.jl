@@ -73,7 +73,8 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
         b_new = update(model.pomdp, model.updater, model.b_dict, SingleOCFAction(model.a.a_lon, model.a.a_lat), observations)
         model.b_dict = deepcopy(b_new)
         #println("dict: ", model.b_dict)
-            
+  
+#=        
 b_dict_tmp = Dict{Int64, SingleOCFBelief}()
 for oid in keys(model.b_dict)
     if ( oid == PEDESTRIAN_OFF_KEY )
@@ -82,7 +83,7 @@ for oid in keys(model.b_dict)
         for (s, prob) in weighted_iterator(model.b_dict[PEDESTRIAN_OFF_KEY] )
             if ( is_state_absent(model.pomdp, s) )
                 (ego_y_state_space, ego_v_state_space) = getEgoDataInStateSpace(model.pomdp, ego.state.posF.t, ego.state.v)
-                s = SingleOCFState(ego_y_state_space, ego_v_state_space, model.pomdp.S_MAX, 0.0, 0.0 ,0.0)
+                s = SingleOCFState(ego_y_state_space, ego_v_state_space, -10.0, -10.0, model.pomdp.PED_THETA_RANGE[1] ,0.0)
             end
             push!(b_states, s)
             push!(b_prob, prob)
@@ -93,9 +94,7 @@ for oid in keys(model.b_dict)
         b_dict_tmp[oid] = model.b_dict[oid]
     end
 end
-#println(b_dict_tmp)
-act = action(model.policy_dec, b_dict_tmp)
-
+=#
         # use policy and belief dictionary to calculate next action
         act = action(model.policy_dec, model.b_dict)
         model.a = LatLonAccel(act.lateral_movement, act.acc)
@@ -134,7 +133,12 @@ function AutomotiveDrivingModels.propagate(veh::Vehicle, action::LatLonAccel, ro
     s_new = v_ * Δt
 
     # longitudional distance based on required velocity and lateral offset
-    delta_x = sqrt(s_new^2 - delta_y^2 )
+    if (abs(delta_y) < abs(s_new) )
+        delta_x = sqrt(s_new^2 - delta_y^2 )
+    else
+        delta_x = 0
+    end
+
     delta_x = clamp(delta_x, 0., delta_x)
     x_ = veh.state.posG.x + delta_x
 
