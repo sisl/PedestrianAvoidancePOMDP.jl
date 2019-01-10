@@ -46,7 +46,7 @@ const PEDESTRIAN_OFF_KEY = -1
     ego_type::VehicleDef = VehicleDef()
     ped_type::VehicleDef = VehicleDef(AgentClass.PEDESTRIAN, 1.0 + 2.0*PED_SAFETY_DISTANCE, 1. + 2.0*PED_SAFETY_DISTANCE)
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
-    lateral_actions::Vector{Float64} = [0.] #[1.0, 0.0, -1.0]
+    lateral_actions::Vector{Float64} = [0.0] #[1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
     PED_A_RANGE::Vector{Float64} = LinRange(-1.0, 1.0, 3)
     PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
@@ -124,27 +124,13 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r -= pomdp.KEEP_VELOCITY_REWARD
     end
 
-
-    if ( length(pomdp.lateral_actions) > 1 && (abs(s.ego_y) < 0.2 || abs(sp.ego_y) < 0.2) )
-        r += pomdp.KEEP_LANE_REWARD
-    end
-#=
-    # do not leave lane
-    if (action.lateral_movement >= 0.1 && sp.ego_y >= pomdp.EGO_Y_MAX )
-        r += (-5)
-    end
-
-    if (action.lateral_movement <= -.1 && sp.ego_y <= pomdp.EGO_Y_MIN )
-        r += (-5)
-    end
-    
-
    # stay in center of the road
-    r_lane = (10) * abs(1-s.ego_y)
-    r += r_lane
-
- =#
-
+    if ( abs(sp.ego_y) <= pomdp.EGO_Y_MAX )
+        l_factor = 1 - abs(sp.ego_y)  / pomdp.EGO_Y_MAX 
+        r += (l_factor * pomdp.KEEP_LANE_REWARD)
+    else
+        r -= pomdp.KEEP_LANE_REWARD
+    end
 
 
     # costs for longitudinal actions
@@ -157,12 +143,6 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
         r += pomdp.ACTION_LAT_COST * abs(action.lateral_movement) 
     end
 
-
-#=
-    if abs(action.acc) > 0 && abs(action.lateral_movement) > 0
-        r += (-10)
-    end
-=#
     return r
     
 end

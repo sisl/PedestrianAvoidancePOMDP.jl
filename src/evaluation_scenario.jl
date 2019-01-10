@@ -58,7 +58,7 @@ function generate_scenario(scenario, ego_v, hit_point)
 end
 
 
-function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system, probability_pedestrian_birth)
+function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, system, probability_pedestrian_birth, lateral_actions)
 
     t_simulation = 12
     timestep = 0.05
@@ -113,7 +113,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
                      AutomotiveSensors.LinearNoise(10, vel_noise, 0.0), false_positive_rate, false_negative_rate, rng) 
 
 
-    pomdp = SingleOCFPOMDP()
+    pomdp = SingleOCFPOMDP(lateral_actions=lateral_actions)
     pomdp.env = env
     pomdp.desired_velocity = ego_v
     pomdp.ΔT = timestep_pomdp

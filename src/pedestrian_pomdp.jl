@@ -82,7 +82,7 @@ for oid in keys(model.b_dict)
         for (s, prob) in weighted_iterator(model.b_dict[PEDESTRIAN_OFF_KEY] )
             if ( is_state_absent(model.pomdp, s) )
                 (ego_y_state_space, ego_v_state_space) = getEgoDataInStateSpace(model.pomdp, ego.state.posF.t, ego.state.v)
-                s = SingleOCFState(ego_y_state_space, ego_v_state_space, model.pomdp.S_MAX, model.pomdp.T_MAX, 0.0 ,0.0)
+                s = SingleOCFState(ego_y_state_space, ego_v_state_space, model.pomdp.S_MAX, 0.0, 0.0 ,0.0)
             end
             push!(b_states, s)
             push!(b_prob, prob)

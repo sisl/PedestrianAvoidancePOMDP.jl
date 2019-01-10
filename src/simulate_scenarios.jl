@@ -44,7 +44,7 @@ s = ArgParseSettings()
         help = "name for the policy"
     "--collisioncost"
         arg_type = Float64
-        default = -500.0
+        default = -1000.0
         help = "reward function - cost for collision: -500.0"
     "--actionloncost"
         arg_type = Float64
@@ -72,7 +72,13 @@ end
 parsed_args = parse_args(ARGS, s)
 
 algorithm = parsed_args["algorithm"]
+
 pomdp = SingleOCFPOMDP()
+if ( occursin("lateral", parsed_args["policy_name"]) )
+    pomdp = SingleOCFPOMDP(lateral_actions = [1.0, 0.0, -1.0])
+else
+    pomdp = SingleOCFPOMDP(lateral_actions = [0.0])
+end
 
 pomdp.COLLISION_COST = parsed_args["collisioncost"]
 pomdp.ACTION_LON_COST = parsed_args["actionloncost"]
@@ -82,8 +88,10 @@ pomdp.KEEP_LANE_REWARD = parsed_args["keeplanereward"]
 pomdp.PROBABILITY_PEDESTRIAN_BIRTH = parsed_args["pedestrianbirthprobability"]
 pomdp.γ = 0.95
 
-println("algorithm: ", algorithm)
 
+
+println("algorithm: ", algorithm)
+println("lateral actions: ", pomdp.lateral_actions)
 parameters_pomdp = string(pomdp.COLLISION_COST, "_", pomdp.PROBABILITY_PEDESTRIAN_BIRTH, "_", pomdp.ACTION_LON_COST, "_", pomdp.ACTION_LAT_COST, "_", pomdp.KEEP_VELOCITY_REWARD, "_", pomdp.KEEP_LANE_REWARD, "_", pomdp.γ, "_")
 policy_name = string(parsed_args["policy_name"], "_", parameters_pomdp, ".jld2")
 log_filename = string("results_", algorithm, "_", policy_name, ".csv")
@@ -99,7 +107,6 @@ if algorithm != "EmergencyBrakingSystem"
     println("pomdp.ACTION_LAT_COST: ", pomdp.ACTION_LAT_COST)
     println("pomdp.KEEP_VELOCITY_REWARD: ", pomdp.KEEP_VELOCITY_REWARD)
     println("pomdp.KEEP_LANE_REWARD: ", pomdp.KEEP_LANE_REWARD)
-
     println("pomdp.PROBABILITY_PEDESTRIAN_BIRTH: ", pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
 
     solver = SparseValueIterationSolver(max_iterations=200, belres=1e-4, include_Q=true, verbose=true)
@@ -139,9 +146,9 @@ for scenario in scenarios
             if algorithm == "EmergencyBrakingSystem"
                 (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = EmergencyBrakingSystem.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles)
             elseif algorithm == "PedestrianAvoidancePOMDP"
-                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
+                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH, pomdp.lateral_actions)
             elseif algorithm == "PedestrianAvoidancePOMDP_EmergencyBrakingSystem"
-                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH)
+                (rec, timestep, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle) = PedestrianAvoidancePOMDP.evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, obstacles, policy, algorithm, pomdp.PROBABILITY_PEDESTRIAN_BIRTH, pomdp.lateral_actions)
             else
                 println("No valid algorithm defined!")
                 return false
@@ -162,7 +169,11 @@ df = DataFrame(Matrix(df)')
 rename!(df, :x1 => :scenario_id, :x2 => :ego_v, :x3 => :hit_point, :x4 => :collision, :x5 => :eb_intervention)
 rename!(df, :x6 => :dv_collision, :x7 => :v_mean, :x8 => :a_mean, :x9 => :a_jerk, :x10 => :a_min)
 
-CSV.write(string("../results/", log_filename), df);
+try
+    mkdir(string("../results/", algorithm, "_", parsed_args["policy_name"]) )
+catch
+end
+CSV.write(string("../results/", algorithm, "_", parsed_args["policy_name"], "/", log_filename), df);
 
 (sum_collisions, sum_eb, dv, v_mean, a_mean, a_jerk, a_min) = PedestrianAvoidancePOMDP.evaluateScenariosMetric(results)
 
