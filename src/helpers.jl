@@ -10,9 +10,10 @@ ego = scene[findfirst(1, scene)]
 if ego.state.v ≈ 0
     return false
 end
+ego_safety_distance_side = Vehicle(ego.state, VehicleDef(2, ego.def.length, ego.def.width+1.5), ego.id)
 for veh in scene
     if veh.id != 1
-        if AutomotivePOMDPs.is_colliding(ego, veh)
+        if AutomotivePOMDPs.is_colliding(ego_safety_distance_side, veh)
             #println(veh)
             println("-----------------> Collision <----------------------")
             return true

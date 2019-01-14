@@ -137,7 +137,11 @@ for scenario in scenarios
     if (scenario == "FP") 
         hit_points = [-100., 200.]
     else
-        hit_points = [0., 10., 20., 30., 40., 50.]
+        if (scenario == "CPCN")
+            hit_points = [0., 10., 20., 30., 40., 50., 800.] # additional scenario without crossing pedestrian
+        else
+            hit_points = [0., 10., 20., 30., 40., 50.]
+        end
     end
     for hit_point in hit_points
         for vut_speed in vut_speeds
