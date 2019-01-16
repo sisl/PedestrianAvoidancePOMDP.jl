@@ -1,0 +1,7 @@
+ERROR: could not open file /home/markuss/PedestrianAvoidancePOMDP.jl/results/PedestrianAvoidancePOMDP_EmergencyBrakingSystem_lateral2/simulate_scenarios.jl
+Stacktrace:
+ [1] include at ./boot.jl:317 [inlined]
+ [2] include_relative(::Module, ::String) at ./loading.jl:1044
+ [3] include(::Module, ::String) at ./sysimg.jl:29
+ [4] exec_options(::Base.JLOptions) at ./client.jl:231
+ [5] _start() at ./client.jl:425
