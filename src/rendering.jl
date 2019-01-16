@@ -37,22 +37,22 @@ function AutomotivePOMDPs.animate_record(rec::SceneRecord,dt::Float64, env::Cros
     function render_rec(t, dt)
        
         frame_index = Int(floor(t/dt)) + 1
-        text_to_visualize = [string("v-ego: ", ego_vehicle[frame_index].state.v*3.6, " km/h" , 
+        text_to_visualize = [string("v-ego: ", round(ego_vehicle[frame_index].state.v*3.6,digits=1), " km/h" , 
                                 " y: ", ego_vehicle[frame_index].state.posG.y, " m",
                                 " ax: ", action_pomdp[frame_index].acc, " m/s²")]
         sensor_overlay = GaussianSensorOverlay(sensor=sensor, o=sensor_o[frame_index])
         occlusion_overlay = OcclusionOverlay(obstacles=env.obstacles)
 
-        text_overlay = TextOverlay(text=text_to_visualize,pos=VecE2(70.,10.),incameraframe=true,color=colorant"white",font_size=20)
+        text_overlay = TextOverlay(text=text_to_visualize,pos=VecE2(80.,10.),incameraframe=true,color=colorant"white",font_size=20)
         belief_overlay = BeliefOverlay(b_dict=belief_dict[frame_index], ego_vehicle=ego_vehicle[frame_index])
       #  max_speed = 14.0
       #  histogram_overlay = HistogramOverlay(pos = VecE2(65.0, 10.0), val=ego_vehicle[frame_index].state.v/max_speed, label="v speed")
 
         if length(prediction) > 0 
             prediction_overlay = EmergencyBrakingSystem.PretictionOverlay(prediction=prediction[frame_index])
-            return AutoViz.render(rec[frame_index-nframes(rec)], env, [prediction_overlay, belief_overlay, sensor_overlay, occlusion_overlay, text_overlay, IDOverlay()], cam=cam)
+            return AutoViz.render(rec[frame_index-nframes(rec)], env, [prediction_overlay, belief_overlay, sensor_overlay, occlusion_overlay, text_overlay], cam=cam)
         else
-            return AutoViz.render(rec[frame_index-nframes(rec)], env, [belief_overlay, sensor_overlay, occlusion_overlay, text_overlay, IDOverlay()], cam=cam) 
+            return AutoViz.render(rec[frame_index-nframes(rec)], env, [belief_overlay, sensor_overlay, occlusion_overlay, text_overlay], cam=cam) 
         end
     end
     return duration, fps, render_rec

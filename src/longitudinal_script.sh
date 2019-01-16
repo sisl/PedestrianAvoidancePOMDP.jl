@@ -17,7 +17,8 @@ do
     do
         for actionloncost in 0.0 -1.0 -2.0 -5.0
         do
-            for p_pedestrian in 0.1 0.3 0.5 0.7 0.9
+          #  for p_pedestrian in 0.1 0.3 0.5 0.7 0.9
+            for p_pedestrian in 0.0 0.2 0.4 0.6 0.8 1.0
             do
                 julia1.0 simulate_scenarios.jl --algorithm=$algorithm --policy_name=$policy_name --collisioncost=$collisioncost --pedestrianbirthprobability=$p_pedestrian --actionloncost=$actionloncost --actionlatcost=$actionlatcost --keepvelocityreward=$keepvelocityreward --keeplanereward=$keeplanereward
             done
