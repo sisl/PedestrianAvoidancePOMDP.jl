@@ -11,6 +11,7 @@ function POMDPs.transition(pomdp::SingleOCFPOMDP, s::SingleOCFState, a::SingleOC
     y_delta_ego = a.lateral_movement * pomdp.ΔT  # simplified movement, not exactly correct -> a=1, t = 1 --> 1m movement to the left
     sp_ego_y = s.ego_y + y_delta_ego
     sp_ego_y = clamp(sp_ego_y, pomdp.EGO_Y_MIN, pomdp.EGO_Y_MAX )
+    y_delta = sp_ego_y - s.ego_y
 
     ## pedestrian transition
     # absent or not

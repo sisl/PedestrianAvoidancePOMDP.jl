@@ -19,7 +19,7 @@ do
         do
             for  keeplanereward in 10.0 20.0 50.0 100.0 
             do
-                julia1.0 simulate_scenarios.jl --algorithm=$algorithm --policy_name=$policy_name --collisioncost=$collisioncost --pedestrianbirthprobability=$p_pedestrian --actionloncost=$actionloncost --actionlatcost=$actionlatcost --keepvelocityreward=$keepvelocityreward --keeplanereward=$keeplanereward
+                nohup julia1.0 simulate_scenarios.jl --algorithm=$algorithm --policy_name=$policy_name --collisioncost=$collisioncost --pedestrianbirthprobability=$p_pedestrian --actionloncost=$actionloncost --actionlatcost=$actionlatcost --keepvelocityreward=$keepvelocityreward --keeplanereward=$keeplanereward &
             done
         done
     done

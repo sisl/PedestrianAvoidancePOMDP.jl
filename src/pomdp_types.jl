@@ -48,7 +48,7 @@ const PEDESTRIAN_OFF_KEY = -1
     longitudinal_actions::Vector{Float64} = [1.0, 0.0, -1.0, -2.0, -4.0]
     lateral_actions::Vector{Float64} = [0.0] #[1.0, 0.0, -1.0]
     ΔT::Float64 = 0.2
-    PED_A_RANGE::Vector{Float64} = LinRange(-1.0, 1.0, 3)
+    PED_A_RANGE::Vector{Float64} = LinRange(-1.0, 1.0, 3) # try increasing that
     PED_THETA_NOISE::Vector{Float64} = LinRange(-0.39/2., 0.39/2., 3)
 
     EGO_Y_MIN::Float64 = -1.
@@ -112,7 +112,8 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
 
     # is there a collision?
     if collision_checker(pomdp,sp)
-        r += pomdp.COLLISION_COST
+        # r += pomdp.COLLISION_COST
+        r += pomdp.COLLISION_COST*(sp.ego_v)
         return r
     end
     
