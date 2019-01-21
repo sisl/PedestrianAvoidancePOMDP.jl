@@ -11,8 +11,8 @@ for algorithm in "PedestrianAvoidancePOMDP_EmergencyBrakingSystem"
 do
     echo "algorithm: " $algorithm
 
-    keepvelocityreward=20.0
-    actionloncost=-1.0
+    keepvelocityreward=20.01
+    actionloncost=-2.0
     for p_pedestrian in 0.0 0.1 0.2 0.3 0.4 0.5 0.6 
     do
         for actionlatcost in 0.0 -10.0 
