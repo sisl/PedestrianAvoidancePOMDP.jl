@@ -4,6 +4,19 @@
 [![Coveralls](https://coveralls.io/repos/github/sisl/PedestrianAvoidancePOMDP.jl/badge.svg?branch=master)](https://coveralls.io/github/sisl/PedestrianAvoidancePOMDP.jl?branch=master)
 
 
+
+## CPAN25 50km/h
+<img src="docs/CPAN25_PedestrianAvoidancePOMDP.gif" width="70%">
+
+## CPCN 50km/h, POMDP + Emergency Braking System
+<img src="docs/CPCN_PedestrianAvoidancePOMDP_EmergencyBrakingSystem_critical_object.gif" width="70%">
+
+## CPCN 50km/h with no crossing pedestrian, POMDP + Emergency Braking System
+<img src="docs/CPCN_PedestrianAvoidancePOMDP_EmergencyBrakingSystem_no_critical_object.gif" width="70%">
+
+## CPAN25 50km/h, POMDP + Emergency Braking System
+<img src="docs/CPCN_PedestrianAvoidancePOMDP_collision.gif" width="70%">
+
 # Description follows soon ...
 
 ## Installation 
