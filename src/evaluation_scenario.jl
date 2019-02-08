@@ -62,7 +62,7 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
 
     t_simulation = 12
     timestep = 0.05
-    timestep_pomdp = 0.2
+    timestep_pomdp = 0.05
 
     nticks = Int(t_simulation / timestep)
 
@@ -94,15 +94,15 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
     ped_initial_state = VehicleState(VecSE2(ped_x, ped_y, ped_theta), env.crosswalk, env.roadway, ped_v)
     ped = Vehicle(ped_initial_state, AutomotivePOMDPs.PEDESTRIAN_DEF, ped_id)
 
-    #ped2 = Vehicle(VehicleState(VecSE2(90., 5., -1.57), env.crosswalk, env.roadway, 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped2_id)
-    #ped3 = Vehicle(VehicleState(VecSE2(103., 5., -1.57), env.crosswalk, env.roadway, 1.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped3_id)
+    ped2 = Vehicle(VehicleState(VecSE2(90., 4.5, -1.57), env.crosswalk, env.roadway, 0.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped2_id)
+    ped3 = Vehicle(VehicleState(VecSE2(103., 4.5, -1.57), env.crosswalk, env.roadway, 1.), AutomotivePOMDPs.PEDESTRIAN_DEF, ped3_id)
 
 
     scene = Scene()
     push!(scene, ego)
     push!(scene, ped)
-    #push!(scene, ped2)
-    #push!(scene, ped3)
+    push!(scene, ped2)
+    push!(scene, ped3)
 
     pos_noise = 0.0
     vel_noise = 0.0
@@ -169,9 +169,9 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
         timestep_simulation = timestep
 
     end
-    models[ped_id] = ConstantPedestrian(v_desired=ped_v, dawdling_amp=0.0) # dumb model
-   # models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
-   # models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
+    models[ped_id] = ConstantPedestrian(v_desired=ped_v, dawdling_amp=0.0, v_noise=0.0) # dumb model
+    models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
+    models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
 
     rec = SceneRecord(nticks+1, timestep_simulation)
 

@@ -112,7 +112,7 @@ function POMDPs.reward(pomdp::SingleOCFPOMDP, s::SingleOCFState, action::SingleO
 
     # is there a collision?
     if collision_checker(pomdp,sp)
-        r += pomdp.COLLISION_COST
+        r += (pomdp.COLLISION_COST - sp.ego_v * 20)
         return r
     end
     

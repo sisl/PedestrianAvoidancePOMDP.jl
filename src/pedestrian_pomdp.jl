@@ -47,14 +47,15 @@ function AutomotiveDrivingModels.observe!(model::PedestrianAvoidancePOMDPFrenet,
     ego = scene[findfirst(egoid, scene)]
     model.pomdp.ego_vehicle = ego
     model.ego_vehicle = ego
-    model.sensor_observations = measure(PerfectSensor(), ego, scene, roadway, model.obstacles)
+    #model.sensor_observations = measure(PerfectSensor(), ego, scene, roadway, model.obstacles)
 
+    # get observations from sensor, only visible objects with sensor noise
+    model.sensor_observations = measure(model.sensor, ego, scene, roadway, model.obstacles)
+   
     # add sensor delay 0.2s
     model.sensor_observations = objects_time_delay(model)
 
-#    # get observations from sensor, only visible objects with sensor noise
-#    model.sensor_observations = measure(model.sensor, ego, scene, roadway, model.obstacles)
-   
+
     # initialization of the belief for the absent state
     if (model.t_current == 0 )
         model.b_dict[PEDESTRIAN_OFF_KEY] = initBeliefAbsentPedestrian(model.pomdp, ego.state.posF.t, ego.state.v)
