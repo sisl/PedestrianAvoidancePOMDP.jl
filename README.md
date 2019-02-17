@@ -1,11 +1,7 @@
 # PedestrianAvoidancePOMDP
 
-  contact: Markus Schratter, [m.schratter@gmx.at](m.schratter@gmx.at) Maxime Bouton, [boutonm@stanford.edu](boutonm@stanford.edu)
-  
+contact: Markus Schratter, [m.schratter@gmx.at](m.schratter@gmx.at) Maxime Bouton, [boutonm@stanford.edu](boutonm@stanford.edu)
 
-[![Build Status](https://travis-ci.org/sisl/PedestrianAvoidancePOMDP.jl.svg?branch=master)](https://travis-ci.org/sisl/PedestrianAvoidancePOMDP.jl)
-
-[![Coveralls](https://coveralls.io/repos/github/sisl/PedestrianAvoidancePOMDP.jl/badge.svg?branch=master)](https://coveralls.io/github/sisl/PedestrianAvoidancePOMDP.jl?branch=master)
 
 # Description follows soon ...
   
@@ -61,19 +57,25 @@ With the script  `src/longitudinal_script.sh` different POMDP policies can be tr
 ## Example scenarios
 ### CPAN25 50km/h, POMDP planner
 Following animation shows a scenario with no obstruction and a crossing pedestrian from the right side. The pedestrian avoidance system (POMDP planner) reduces the velocity and accelerates when the pedestrian has passed the vehicle.
+
 <img  src="docs/CPAN25_PedestrianAvoidancePOMDP.gif"  width="70%">
 
   
 ### CPCN 50km/h, POMDP planner
 The obstruction on the right side covers the crossing pedestrian. In this case the pedestrian is for the system late visible and a collision is unavoidable. With a higher speed reduction based on the obstruction the collision would be avoidable.
+
 <img  src="docs/CPCN_PedestrianAvoidancePOMDP_collision.gif"  width="70%">
+
 
 ### CPCN 50km/h, POMDP planner + AEB
 Here additional to the POMDP planner the AEB system is active. Due to the AEB system (higher deceleration) the collision is avoidable and the ego vehicle does not pass the obstruction very slow.
+
 <img  src="docs/CPCN_PedestrianAvoidancePOMDP_EmergencyBrakingSystem_critical_object.gif"  width="70%">
+
 
 ### CPCN 50km/h with no crossing pedestrian, POMDP planner + AEB
 At this scenario no pedestrian crosses the road. The ego vehicle reduces the velocity based on the poor visibility and a possible appearing pedestrian behind the obstruction. After the obstruction the ego vehicle accelerates to maintain the desired velocity of 50km/h.
+
 <img  src="docs/CPCN_PedestrianAvoidancePOMDP_EmergencyBrakingSystem_no_critical_object.gif"  width="70%">
 
   
