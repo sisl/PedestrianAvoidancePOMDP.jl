@@ -1,14 +1,20 @@
 # PedestrianAvoidancePOMDP
 
-contact: Markus Schratter, [m.schratter@gmx.at](m.schratter@gmx.at) Maxime Bouton, [boutonm@stanford.edu](boutonm@stanford.edu)
+contact: Markus Schratter, [m.schratter@gmx.at](m.schratter@gmx.at) Maxime Bouton, [boutonm@stanford.edu](boutonm@stanford.edu).
+
+This code is associated with the following publication:
+
+M. Schratter, M. Bouton, M. J. Kochenderfer, D. Watzenig, "Pedestrian Collision Avoidance System for Scenarios with Occlusions," in *IEEE Intelligent Vehicle Symposium*, 2019. [ArXiv](https://arxiv.org/abs/1904.11566).
 
 
-# Description follows soon ...
+# Description
   
 POMDP planner in combination with an Autonomous Emergency Braking (AEB) system.
 
 - POMDP planner: Pedestrian collision avoidance system to handle scenarios with pedestrians on the road and situations with a poor visibility, based on obstructions on the side of the road.  
 - AEB system: Intervenes only in unavoidable collisions.
+
+See the [paper](https://arxiv.org/abs/1904.11566) for a more detailed description.
 
  
   
@@ -81,4 +87,4 @@ At this scenario no pedestrian crosses the road. The ego vehicle reduces the vel
   
 
 ## Reference
-An explanation of the implementation can be found [paper], there is a detailed description how the system design looks like and results of the evaluation are shown.
+An explanation of the implementation can be found [paper](https://arxiv.org/abs/1904.11566), there is a detailed description how the system design looks like and results of the evaluation are shown. You may cite the IV paper if this code is helpful to you.
