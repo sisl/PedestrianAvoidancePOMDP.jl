@@ -3,8 +3,9 @@ language: julia
 os:
   - linux
   - osx
+  - windows
 julia:
-  - 0.6
+  - 1.3
   - nightly
 matrix:
   allow_failures:
@@ -13,7 +14,10 @@ matrix:
 notifications:
   email: false
 script:
+  - git clone https://github.com/JuliaRegistries/General  $(julia -e 'import Pkg; println(joinpath(Pkg.depots1(), "registries", "General"))')  
+  - git clone https://github.com/SISL/Registry  $(julia -e 'import Pkg; println(joinpath(Pkg.depots1(), "registries", "SISL"))')  
+  - git clone https://github.com/JuliaPOMDP/Registry  $(julia -e 'import Pkg; println(joinpath(Pkg.depots1(), "registries", "JuliaPOMDP"))')  
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("PedestrianAvoidancePOMDP"); Pkg.test("PedestrianAvoidancePOMDP"; coverage=true)'
+  - julia --project --color=yes -e 'import Pkg; Pkg.build(); Pkg.test(coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("PedestrianAvoidancePOMDP")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
