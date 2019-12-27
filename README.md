@@ -20,26 +20,14 @@ See the [paper](https://arxiv.org/abs/1904.11566) for a more detailed descriptio
   
 ## Getting started
 ### Installation / Dependencies
+
 ```julia 
-using Pkg
+using Pkg 
 Pkg.add("POMDPs")
-Pkg.add("POMDPPolicies")
 using POMDPs
-POMDPs.add_registry()
-
-Pkg.add(PackageSpec(url="https://github.com/sisl/Vec.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/Records.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/AutomotiveDrivingModels.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/AutoViz.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/AutomotiveSensors.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/AutoUrban.jl"))
-Pkg.add(PackageSpec(url="https://github.com/JuliaPOMDP/RLInterface.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/AutomotivePOMDPs"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/GridInterpolations.jl"))
-Pkg.add(PackageSpec(url="https://github.com/JuliaPOMDP/POMDPModelTools.jl"))
-Pkg.add(PackageSpec(url="https://github.com/sisl/EmergencyBrakingSystem.jl"))
-
-Pkg.add(PackageSpec(url="https://github.com/sisl/PedestrianAvoidancePOMDP.jl"))
+POMDPs.add_registry() # add JuliaPOMDP registry 
+Pkg.Registry.add("https://github.com/sisl/Registry") # add sisl registry 
+Pkg.add("https://github.com/sisl/PedestrianAvoidancePOMDP.jl") # install the package and its dependencies
 ```
 
 ### Folder structure
