@@ -5,4 +5,9 @@
 *.webm
 docs/.ipynb_checkpoints/
 policy/.ipynb_checkpoints/Policy_Server-checkpoint.ipynb
+policy/*tmp/
+policy/tmp*
+policy/*.tex
+policy/*.png
+Manifest.toml
 

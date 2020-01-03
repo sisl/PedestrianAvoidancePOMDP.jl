@@ -27,7 +27,7 @@ Pkg.add("POMDPs")
 using POMDPs
 POMDPs.add_registry() # add JuliaPOMDP registry 
 Pkg.Registry.add("https://github.com/sisl/Registry") # add sisl registry 
-Pkg.add("https://github.com/sisl/PedestrianAvoidancePOMDP.jl") # install the package and its dependencies
+Pkg.add("PedestrianAvoidancePOMDP") # install the package and its dependencies
 ```
 
 ### Folder structure

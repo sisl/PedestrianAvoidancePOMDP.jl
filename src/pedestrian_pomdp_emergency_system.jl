@@ -83,4 +83,4 @@ function AutomotiveDrivingModels.get_name(model::PedestrianAvoidanceSystem)
     return "Pedestrian Avoidance System (POMDP + Emergency System)"
 end
 
-AutomotiveDrivingModels.rand(model::PedestrianAvoidanceSystem) = model.a
+AutomotiveDrivingModels.rand(rng::AbstractRNG, model::PedestrianAvoidanceSystem) = model.a

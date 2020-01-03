@@ -1,7 +1,7 @@
-__precompile__()
 module PedestrianAvoidancePOMDP
 
 using Random
+using Distributions
 using AutomotiveDrivingModels
 using AutoViz
 using AutomotiveSensors

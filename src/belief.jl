@@ -132,7 +132,7 @@ function POMDPs.update(pomdp::SingleOCFPOMDP, up::SingleOCFUpdater, b::SingleOCF
 end
 
 
-function POMDPs.initial_state_distribution(pomdp::SingleOCFPOMDP)
+function POMDPs.initialstate_distribution(pomdp::SingleOCFPOMDP)
     
     bp = ones(n_states(pomdp)) / n_states(pomdp)
 

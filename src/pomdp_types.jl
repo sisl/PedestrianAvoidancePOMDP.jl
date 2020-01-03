@@ -183,9 +183,9 @@ function AutomotivePOMDPs.collision_checker(pomdp::SingleOCFPOMDP, s::SingleOCFS
     end
     if Δ ≤ r_a + r_b
         # fast check is true, run parallel axis theorem
-        Pa = AutomotivePOMDPs.polygon(center_a, object_a_def)
-        Pb = AutomotivePOMDPs.polygon(center_b, object_b_def)
-        return AutomotivePOMDPs.overlap(Pa, Pb)
+        Pa = AutomotiveDrivingModels.polygon(center_a, object_a_def)
+        Pb = AutomotiveDrivingModels.polygon(center_b, object_b_def)
+        return AutomotiveDrivingModels.overlap(Pa, Pb)
     end
     return false
 end

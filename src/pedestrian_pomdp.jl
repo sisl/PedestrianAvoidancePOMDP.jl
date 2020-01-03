@@ -151,7 +151,7 @@ function AutomotiveDrivingModels.get_name(model::PedestrianAvoidancePOMDPFrenet)
     return "Pedestrian Avoidance System (POMDP)"
 end
 
-AutomotiveDrivingModels.rand(model::PedestrianAvoidancePOMDPFrenet) = model.a
+AutomotiveDrivingModels.rand(rng::AbstractRNG, model::PedestrianAvoidancePOMDPFrenet) = model.a
 
 
 @with_kw mutable struct ObservationCallback
@@ -175,16 +175,17 @@ end
 
 function AutomotiveDrivingModels.run_callback(
         callback::ObservationCallback,
-        rec::EntityQueueRecord{S,D,I},
+        scenes::Vector{Scene},
+        actions::Union{Nothing, Vector{Frame{A}}},
         roadway::R,
         models::Dict{I,M},
-        tick::Int) where {S,D,I,R,M<:DriverModel}
+        tick::Int) where {A<:EntityAction, S,D,I,R,M<:DriverModel}
     
     push!(callback.sensor_observations, models[1].sensor_observations)
     push!(callback.ego_vehicle, models[1].ego_vehicle)
     push!(callback.ego_a, models[1].a.a_lon)
 
-    collision = is_crash(rec[0])
+    collision = is_crash(scenes[tick])
     push!(callback.collision, collision)
 
     push!(callback.b_dict, deepcopy(models[1].b_dict))

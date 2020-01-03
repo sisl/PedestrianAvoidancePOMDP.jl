@@ -173,9 +173,6 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
     models[ped2_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
     models[ped3_id] = ConstantPedestrian(v_desired=0.0, dawdling_amp=0.05) # dumb model
 
-    rec = SceneRecord(nticks+1, timestep_simulation)
-
-
     # callback data definition
     sensor_observations = [Vehicle[]]
     ego_vehicle = Vehicle[]
@@ -195,9 +192,9 @@ function evaluate_scenario(ego_x, ego_y, ego_v, ped_x, ped_y, ped_v, ped_theta, 
                         ego_a, collision, belief, action_pomdp, collision_rate, ttc, 
                         risk, emergency_brake_request,prediction_obstacle),)
 
-    simulate!(rec, scene, env.roadway, models, nticks, obs_callback)
+    scenes = AutomotiveDrivingModels.simulate(scene, env.roadway, models, nticks, timestep_simulation, callbacks=obs_callback)
 
-    return (rec, timestep_simulation, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle)
+    return (scenes, timestep_simulation, env, sensor, sensor_observations, ego_vehicle, ego_a, collision, belief, action_pomdp, collision_rate, ttc, risk, emergency_brake_request, prediction_obstacle)
 
 end
 
